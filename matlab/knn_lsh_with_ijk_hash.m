@@ -1,5 +1,4 @@
-function [stencils] = knn_lsh_with_ijk_hash(node_list, max_st_size, hnx)
-
+function [stencils, sorted_nodes] = knn_lsh_with_ijk_hash(node_list, max_st_size, hnx)
 
 % Dimensions of the hash overlay grid (hnx by hny by hnz regular grid
 % spanning the full bounding box of the domain extent)
@@ -32,16 +31,19 @@ else
     zmax = 0;
 end
 if (ymax-ymin) > 1e-8
-    hny = hnx;
+    aspect = (ymax-ymin)/(xmax-xmin);
+    hny = ceil(hnx * aspect);
 else 
     hny = 1;
 end
 if (zmax-zmin) > 1e-8
-    hnz = hnx
+    aspect = (zmax-zmin)/(xmax-xmin);
+    hnz = ceil(hnx * aspect);
 else 
     hnz = 1;
 end
 
+overlay_dimensions=[hnx hny hnz]
 
 nb_nodes = size(node_list,1);
 
@@ -107,7 +109,24 @@ for i = 1 : nb_nodes
 end
 
 %fprintf('Nodes hashed, ready to query neighbors');
-% TODO: Sort nodes according to hash for better access patterns
+
+% Now we sort our nodes
+indx = 1;
+sorted_nodes = node_list; %zeros(size(node_list));
+if 1
+for i =1:size(cell_hash, 1)
+    for j = 1:length(cell_hash(i,:))
+        nid = cell_hash(i,j);
+        % avoid 0's at the end of every row
+        if nid == 0
+            break;
+        end
+        sorted_nodes(indx,:) = node_list(nid,:);
+        cell_hash(i,j) = indx;
+        indx = indx + 1;
+    end
+end
+end
 
 % Foreach node:
 %      Generate a stencil:
@@ -118,7 +137,7 @@ end
 %          sort the candidate list according to distance from node
 %          select stencil_size closest matches
 for  p = 1:nb_nodes
-    node = node_list(p,:);
+    node = sorted_nodes(p,:);
     % xc, yc and zc are the (x,y,z) corresponding to the cell id
     % xmin,ymin,zmin are member properties of the Grid class
     % cdx,cdy,cdz are the deltaX, deltaY, deltaZ for the cell overlays
@@ -258,9 +277,9 @@ for  p = 1:nb_nodes
             nid = cell_hash(cell_id,q);
             % Matlab appends 0's to all columns as we expand a list
             if nid == 0
-                continue; 
+                break; 
             end
-            neighbor = node_list(nid,:);
+            neighbor = sorted_nodes(nid,:);
             sep =(node - neighbor);
             dist = sqrt(sep*sep');
             dists(end+1) = dist;
