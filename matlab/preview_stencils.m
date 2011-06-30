@@ -90,9 +90,12 @@ function plot_stencils(j)
         c_x = max_rad * c_x + x_j(1); 
         c_y = max_rad * c_y + x_j(2); 
         c_z = max_rad * c_z + x_j(3); 
-        surf(c_x, c_y, c_z);
-        alpha(0.1);
-        shading interp;
+        sp1 = surf(c_x, c_y, c_z);
+        %alpha(0.5);
+        alpha = 0.2;
+        set(sp1,'EdgeColor',[0.5 0.5 0.5], 'EdgeAlpha', alpha,... 
+            'FaceColor','m', 'FaceLighting','phong',... 
+            'FaceAlpha',alpha/2); 
         ti = sprintf('Stencil %d', j);
         title(ti);
         axis square;
