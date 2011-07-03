@@ -1,0 +1,7 @@
+-(done) IJK cell resolution factor in domain aspect (i.e., [1 0.5 1])
+- Implement Z-ordering for LSH
+- Benchmark comparison of KDTree and LSH (both Z and IJK indexing)
+- Compare Sparsity patterns (Z and IJK)
+- Quantitative analysis of benefits to sparsity (e.g., cache hits vs cache
+  misses) 
+- IJK query search in circle (not square)
