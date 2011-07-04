@@ -1,4 +1,4 @@
-function [direction] = morton_compares_func(input, indx_p, indx_q)
+function [direction] = morton_compare_func(input, indx_p, indx_q)
 %% Floating Point Implicit Morton Order Sort Algorithm
 % Requires: d-dimensional points p and q
 % Returns: 
@@ -26,30 +26,41 @@ p = input(indx_p,:);
 q = input(indx_q,:);
 end
 
-% The negative here swaps flips the bits to give us the min value
+% The number of leading zeros on most differing dimension
 x = 0;
 j = 1;
-dim = 0;
 % Node dimensions
 d = size(p, 2);
+
 for k = 1:d
     if (p(k) < 0) ~= (q(k) < 0)
         j = k; 
+        x = 0; 
         break; 
     end
+    
+    %% THIS IS THE BITWISE OPERATION. CURRENTLY ONLY WORKS FOR INTEGER
+    %% NODES... not sure why. 
     % Using vector notation just in case. It really should only compare one
     % node to one other, but you never know in matlab.
-    y = XOR_MSB(p(k), q(k));
+    y = xor_msb(p(k), q(k))
     if x < y
+        % Update the DIMENSION in which we compare
         j = k;
+        % Update the EXPONENT (magnitude) of difference
         x = y;
     end
+    %display([dec2bin(typecast(p(k), 'uint64'),64); dec2bin(typecast(q(k), 'uint64'),64)])
 end
-if p(j) == q(j) 
-    direction = 0; 
-elseif p(j) <= q(j) 
+points = [p; q]
+
+results = [j, x]
+
+if p(j) < q(j) 
     direction = -1; 
-else 
+elseif p(j) > q(j) 
     direction = 1; 
+else 
+    direction = 0; 
 end
 end
