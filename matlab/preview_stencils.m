@@ -1,12 +1,8 @@
 function [] = preview_stencils(nodes, stencils, aspect_ratio)
 
-dim = 3; 
+dim = 2; 
 if size(nodes, 2) < 2
    nodes = [nodes zeros(size(nodes,1),1)]; 
-   dim = 2;
-end
-
-if size(nodes, 2) < 3
    dim = 2;
 end
 
@@ -22,6 +18,11 @@ max_y = max(nodes(:,2));
 
 min_z = min(nodes(:,3)); 
 max_z = max(nodes(:,3));
+
+if max_z - min_z > 0
+   dim = 3;
+end
+
 
 j = 1;
 

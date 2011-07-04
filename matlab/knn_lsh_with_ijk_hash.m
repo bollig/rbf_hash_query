@@ -113,7 +113,7 @@ end
 % Now we sort our nodes
 indx = 1;
 sorted_nodes = node_list; %zeros(size(node_list));
-if 1
+if 0
 for i =1:size(cell_hash, 1)
     for j = 1:length(cell_hash(i,:))
         nid = cell_hash(i,j);

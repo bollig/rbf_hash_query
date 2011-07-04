@@ -1,4 +1,4 @@
-function [TF] = morton_compares_func(input, indx_p, indx_q)
+function [direction] = morton_compares_func(input, indx_p, indx_q)
 %% Floating Point Implicit Morton Order Sort Algorithm
 % Requires: d-dimensional points p and q
 % Returns: 
@@ -22,8 +22,8 @@ if iscell(input)
 p = input{indx_p,:};
 q = input{indx_q,:};
 else 
-p = input(indx_p,:)
-q = input(indx_q,:)
+p = input(indx_p,:);
+q = input(indx_q,:);
 end
 
 % The negative here swaps flips the bits to give us the min value
@@ -33,6 +33,10 @@ dim = 0;
 % Node dimensions
 d = size(p, 2);
 for k = 1:d
+    if (p(k) < 0) ~= (q(k) < 0)
+        j = k; 
+        break; 
+    end
     % Using vector notation just in case. It really should only compare one
     % node to one other, but you never know in matlab.
     y = XOR_MSB(p(k), q(k));
@@ -42,10 +46,10 @@ for k = 1:d
     end
 end
 if p(j) == q(j) 
-    TF = 0; 
+    direction = 0; 
 elseif p(j) <= q(j) 
-    TF = -1; 
+    direction = -1; 
 else 
-    TF = 1; 
+    direction = 1; 
 end
 end

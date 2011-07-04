@@ -14,8 +14,7 @@ function [hash_indices] = knn_lsh_morton_hash(nodes, stencil_size)
 addpath('./quicksort');
 
 hash_indices = quicksort(nodes, @morton_compare_func);
-sorted_nodes = nodes(hash_indices,:)
-
+sorted_nodes = nodes(hash_indices,:);
 
 %% This will sort structs. All we have to do is make sure the "value" is our
 % z-index. Unlike STL, matlab sorts static data. STL allows us to sort as
