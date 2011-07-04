@@ -77,10 +77,27 @@ elseif (xp == xq)
     if mp_l == mq_l
         xval = 0; 
     else
-        mp_l = bitor(bitxor(mp_l, mq_l), lzero_l);
-        mp_d = typecast(mp_l, 'double');
-        [mp_d xq] = log2(mp_d - lzero_d);
-        xval = uint32(xp + xq) 
+       % mx_l = bitor(bitxor(bitor(mp_l, lzero_l), bitor(mq_l, lzero_l)), lzero_l);
+        mx_l = bitxor(mp_l, mq_l);
+        nx_l = bitor(mx_l, lzero_l);
+        mx_d = typecast(mx_l, 'double');  
+        nx_d = typecast(nx_l, 'double');
+        ox_d = nx_d - lzero_d; 
+              
+        display(num2bin(mp_d))
+        display(num2bin(mq_d))
+        display(num2bin(mx_d))
+        display(num2bin(nx_d))
+        display(num2bin(ox_d))
+        vx = num2bin(nx_d); 
+        wx = num2bin(nx_d); 
+        vy = num2bin(ox_d);
+        
+        % exponent
+        xx = str2num(vx(59:end))
+        found = find(vx == '1',2)-2;
+        [mx_d xx2] = log2(ox_d)
+        xval = uint32(xp + xx2)
     end
 else
     xval = xp; 
