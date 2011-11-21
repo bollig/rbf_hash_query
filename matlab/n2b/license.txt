@@ -1,0 +1,1 @@
+No licence. From: http://www.mathworks.com/matlabcentral/fileexchange/1777-from-double-to-string
