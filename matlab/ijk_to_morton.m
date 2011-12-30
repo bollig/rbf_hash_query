@@ -1,11 +1,17 @@
 function [morton_ind] = ijk_to_morton(ijk_ind, dims, boundingBox)
-
-linind=ijk_ind; %start index count for array at zero
-ind2str=dec2bin(linind); %convert indices to base-2
-rb=ind2str(:,1:2:end); %take alternating bits for row and column
-cb=ind2str(:,2:2:end);
-r=bin2dec(rb)+1; %convert the row from bit to decimal
-c=bin2dec(cb)+1; %convert column
-ind=[dims*(c-1)+r]'; %make a linear index into array for easy addressing
-
+if (dims < 2)
+    morton_ind = ijk_ind(:,1); 
+else
+    
+    X = dilate(ijk_ind(:,1)-1, dims-1, 1);
+    Y = dilate(ijk_ind(:,2)-1, dims-1, 1);
+    
+    if (dims > 2)
+        Z = dilate(ijk_ind(:,3), dims-1, 1);
+        morton_ind = bitor(bitor(bitshift(X,2), bitshift(Y,1)), Z);  
+    else 
+       morton_ind = bitor(bitshift(X,1), Y);  
+    end
+   
+end
 end
