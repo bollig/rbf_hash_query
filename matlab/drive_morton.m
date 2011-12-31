@@ -1,5 +1,5 @@
 DIM = 3;
-NX = 4; 
+NX = 8; 
 if DIM == 1
     %[nodeX, nodeY, nodeZ] = meshgrid(linspace(0,1,NX),0,0);
     [nodeX, nodeY, nodeZ] = meshgrid(1:NX,0,0);
@@ -23,7 +23,7 @@ ijk_ind = [ijkX(:), ijkY(:), ijkZ(:)];
 %subplot(2,1,1)
 plot3(nodes(:,1), nodes(:,2), nodes(:,3),'o-');
 
-morton_ind = ijk_to_u(ijk_ind, DIM, [0,1]);
+morton_ind = ijk_to_x(ijk_ind, DIM, [0,1]);
 
 [temp morton_compressed_ind] = sort(morton_ind); 
 s_nodes = nodes(morton_compressed_ind,:); 
