@@ -1,4 +1,4 @@
-DIM = 3;
+DIM = 2;
 NX = 8; 
 if DIM == 1
     %[nodeX, nodeY, nodeZ] = meshgrid(linspace(0,1,NX),0,0);
@@ -32,4 +32,30 @@ plot3(s_nodes(:,1), s_nodes(:,2), s_nodes(:,3),'o-');
 xlabel('k');
 ylabel('i');
 zlabel('j');
-%plot(nodes(morton_ind,1), nodes(morton_ind,2),'o-');
+
+
+subplot(2,2,1); 
+plot(nodes(:,1), nodes(:,2), 'o-');
+title('Original (Raster) Order');
+
+
+subplot(2,2,2); 
+morton_ind = ijk_to_zz(ijk_ind, DIM, [0,1]);
+[temp morton_compressed_ind] = sort(morton_ind); 
+s_nodes = nodes(morton_compressed_ind,:); 
+plot(s_nodes(:,1), s_nodes(:,2), 'o-');
+title('Morton (Z) Order');
+
+subplot(2,2,3); 
+morton_ind = ijk_to_u(ijk_ind, DIM, [0,1]);
+[temp morton_compressed_ind] = sort(morton_ind); 
+s_nodes = nodes(morton_compressed_ind,:); 
+plot(s_nodes(:,1), s_nodes(:,2), 'o-');
+title('Gray-Code (U) Order');
+
+subplot(2,2,4); 
+morton_ind = ijk_to_x(ijk_ind, DIM, [0,1]);
+[temp morton_compressed_ind] = sort(morton_ind); 
+s_nodes = nodes(morton_compressed_ind,:); 
+plot(s_nodes(:,1), s_nodes(:,2), 'o-');
+title('Cross (X) Order');
