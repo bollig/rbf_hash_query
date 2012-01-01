@@ -28,34 +28,37 @@ morton_ind = ijk_to_x(ijk_ind, DIM, [0,1]);
 [temp morton_compressed_ind] = sort(morton_ind); 
 s_nodes = nodes(morton_compressed_ind,:); 
 %subplot(2,1,2)
-plot3(s_nodes(:,1), s_nodes(:,2), s_nodes(:,3),'o-');
-xlabel('k');
-ylabel('i');
-zlabel('j');
+% plot3(s_nodes(:,1), s_nodes(:,2), s_nodes(:,3),'o-');
+% xlabel('k');
+% ylabel('i');
+% zlabel('j');
 
 
 subplot(2,2,1); 
-plot(nodes(:,1), nodes(:,2), 'o-');
+plot3(nodes(:,1), nodes(:,2), nodes(:,3),'o-');
 title('Original (Raster) Order');
-
+view(DIM)
 
 subplot(2,2,2); 
 morton_ind = ijk_to_zz(ijk_ind, DIM, [0,1]);
 [temp morton_compressed_ind] = sort(morton_ind); 
 s_nodes = nodes(morton_compressed_ind,:); 
-plot(s_nodes(:,1), s_nodes(:,2), 'o-');
+plot3(s_nodes(:,1), s_nodes(:,2), s_nodes(:,3),'o-');
 title('Morton (Z) Order');
+view(DIM)
 
 subplot(2,2,3); 
 morton_ind = ijk_to_u(ijk_ind, DIM, [0,1]);
 [temp morton_compressed_ind] = sort(morton_ind); 
 s_nodes = nodes(morton_compressed_ind,:); 
-plot(s_nodes(:,1), s_nodes(:,2), 'o-');
+plot3(s_nodes(:,1), s_nodes(:,2), s_nodes(:,3),'o-');
 title('Gray-Code (U) Order');
+view(DIM)
 
 subplot(2,2,4); 
 morton_ind = ijk_to_x(ijk_ind, DIM, [0,1]);
 [temp morton_compressed_ind] = sort(morton_ind); 
 s_nodes = nodes(morton_compressed_ind,:); 
-plot(s_nodes(:,1), s_nodes(:,2), 'o-');
+plot3(s_nodes(:,1), s_nodes(:,2), s_nodes(:,3),'o-');
 title('Cross (X) Order');
+view(DIM)
