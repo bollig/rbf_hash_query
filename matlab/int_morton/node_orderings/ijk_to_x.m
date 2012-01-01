@@ -21,20 +21,20 @@ else
         ZxorY = bitxor(Z,Y); 
         ZxorX = bitxor(Z,X); 
         
-       output_ind = merge3( XxorY, Z, X );
+       output_ind = interleave3( XxorY, Z, X );
     else
             %output_ind = bitor(  bitshift( bitxor(X,Y) , edge^(dims-1))   , Y) + 1; 
    
-        output_ind = merge2( XxorY, Y );
+        output_ind = interleave2( XxorY, Y );
     end
 end
 end
 
-function [out] = merge2(marg1, marg2)
+function [out] = interleave2(marg1, marg2)
     out = bitor( bitshift(marg1,1) , marg2 ) + 1;  
 end
 
-function [out] = merge3(marg1, marg2, marg3)
+function [out] = interleave3(marg1, marg2, marg3)
     out = bitor( bitor( bitshift(marg1,2) , bitshift(marg2,1) ), marg3) + 1;  
 end
    
