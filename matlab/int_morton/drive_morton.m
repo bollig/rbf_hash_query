@@ -1,11 +1,11 @@
 clear all;
 
-
+addpath('node_orderings')
 
 DIM = 3;
-NX = 10;
+NX = 8;
 plotCurves = 1;
-testAll = 0;
+testAll = 1;
 if DIM == 1
     %[nodeX, nodeY, nodeZ] = meshgrid(linspace(0,1,NX),0,0);
     [nodeX, nodeY, nodeZ] = meshgrid(1:NX,0,0);
