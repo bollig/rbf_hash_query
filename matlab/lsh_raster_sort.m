@@ -1,5 +1,5 @@
 
-function [cell_sorted_indices, sorted_nodes] = lsh_raster_sort(cell_hash, node_list, nb_nodes, hnx)
+function [sorted_nodes] = lsh_raster_sort(cell_hash, node_list, nb_nodes, hnx)
 indx = 1;
 sorted_nodes = node_list; %zeros(size(node_list));
 if 0
