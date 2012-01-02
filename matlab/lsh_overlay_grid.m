@@ -1,5 +1,8 @@
 
-function [cell_hash_ind, cell_props] = lsh_overlay_grid(node_list, nb_nodes, hnx, index_func)
+function [cell_hash_ind, cell_ijk, cell_props] = lsh_overlay_grid(node_list, nb_nodes, hnx, index_func)
+
+debug = 1; 
+
 
 % Dimensions of the hash overlay grid (hnx by hny by hnz regular grid
 % spanning the full bounding box of the domain extent)
@@ -84,7 +87,7 @@ cdz = (zmax - zmin) / hnz;
         %%end
         yc(yc == hny) = yc(yc == hny) - 1;
     else
-        yc = 0;
+        yc = zeros(size(xc));
     end
     if (cdz > 0)
         zc = floor((node_list(:,3) - zmin) / cdz);
@@ -93,14 +96,14 @@ cdz = (zmax - zmin) / hnz;
         %end
         zc(zc == hnz) = zc(zc == hnz) - 1;
     else
-        zc = 0;
+        zc = zeros(size(xc));
     end
     
     % This is the actual hash value of our node. LSH has 3 independent hash
     % functions, but we can combine them into one below. 
     node_ijk_hashes = [xc, yc, zc]; 
     
-    %cell_ijk = ((xc.*hny) + yc).*hnz + zc + 1;
+    cell_ijk = ((xc.*hny) + yc).*hnz + zc;
     
     % KEY: this is how we get our index for the 3D overlay grid cell
     % ZERO based cell_id (we adjust by adding 1);
@@ -114,6 +117,13 @@ cdz = (zmax - zmin) / hnz;
    %% cell_hashes(cell_id,cell_id_end(cell_id)) = i;
 %%end
 
+if debug
+    %% Draw only unique rectangles
+    recs = unique([xc*cdx,yc*cdy,cdx*ones(size(xc)),cdy*ones(size(xc))], 'rows');
+    for i = 1:size(recs,1)
+        rectangle('Position',recs(i,:));
+    end
+end
 cell_props.hnx=hnx;
 cell_props.hny=hny;
 cell_props.hnz=hnz;
