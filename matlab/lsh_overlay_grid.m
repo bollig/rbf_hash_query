@@ -119,7 +119,7 @@ cdz = (zmax - zmin) / hnz;
 
 if debug
     %% Draw only unique rectangles
-    recs = unique([xc*cdx,yc*cdy,cdx*ones(size(xc)),cdy*ones(size(xc))], 'rows');
+    recs = unique([xmin+xc*cdx,ymin+yc*cdy,cdx*ones(size(xc)),cdy*ones(size(xc))], 'rows');
     for i = 1:size(recs,1)
         rectangle('Position',recs(i,:),'LineStyle',':');
     end
