@@ -121,7 +121,7 @@ if debug
     %% Draw only unique rectangles
     recs = unique([xc*cdx,yc*cdy,cdx*ones(size(xc)),cdy*ones(size(xc))], 'rows');
     for i = 1:size(recs,1)
-        rectangle('Position',recs(i,:));
+        rectangle('Position',recs(i,:),'LineStyle',':');
     end
 end
 cell_props.hnx=hnx;
