@@ -1,4 +1,4 @@
-function [output_ind] = ijk_to_u(ijk_ind, dims, boundingBox)
+function [output_ind] = ijk_to_u(ijk_ind, dims)
 %% Attempts to produce a O_U-order (Fig 9, (C)) but doesnt get then in and
 %% out on the same side. The in is opposite the out corner in all dims, so
 %% it looks nice. 

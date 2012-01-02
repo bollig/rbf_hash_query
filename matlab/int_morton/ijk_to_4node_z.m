@@ -1,4 +1,4 @@
-function [output_ind] = ijk_to_x(ijk_ind, dims, boundingBox)
+function [output_ind] = ijk_to_4node_z(ijk_ind, dims)
 %% Equations 57, 58 from Stocco and Schrack 2009
 I = ijk_ind(:,1)-1; 
 J = ijk_ind(:,2)-1; 

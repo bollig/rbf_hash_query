@@ -1,4 +1,4 @@
-function [output_ind] = ijk_to_x(ijk_ind, dims, boundingBox)
+function [output_ind] = ijk_to_x(ijk_ind, dims)
 %% Attempts to produce a O_X-order (Fig 9, (B)) 
 I = ijk_ind(:,1)-1;
 J = ijk_ind(:,2)-1;

@@ -1,4 +1,4 @@
-function [output_ind] = ijk_to_z(ijk_ind, dims, boundingBox)
+function [output_ind] = ijk_to_z(ijk_ind, dims)
 %% Produces a O_Z-order (morton)
 I = ijk_ind(:,1)-1; 
 J = ijk_ind(:,2)-1; 
