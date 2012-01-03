@@ -92,6 +92,10 @@ node_ijk_hashes = [xc, yc, zc];
 % ZERO based cell_id (we adjust by adding 1);
 cell_hash_ind = index_func(node_ijk_hashes, dim);
 
+for i=1:size(cell_hash_ind,1)
+cell_histogram = 
+
+
 if debug
     if dim==2
         %% Draw only unique rectangles

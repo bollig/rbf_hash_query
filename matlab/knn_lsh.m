@@ -57,8 +57,10 @@ else
         % Start at center
         center_cell_ijk = sorted_cell_ijk(p,:);
         
+        cell_ind = sorted_hashes(p); 
+        
         % Append all nodes in center cell to list
-        nodes_in_cell =1; 
+        nodes_in_cell_ind = getCellNodes(cell_ind, sorted_hashes); 
     end
     
     
@@ -70,4 +72,14 @@ if debug
     plot_stencil(10, stencils, sorted_nodes, cell_props);
     hold off;
 end
+end
+
+function [node_ind] = getCellNodes(hash_ind, hash_list)
+left = 1; 
+right = 1; 
+
+while left && right 
+
+end
+
 end

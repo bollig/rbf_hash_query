@@ -1,0 +1,29 @@
+Locality Sensitive Hashing (LSH) for Node Reordering and Improved Sparse Matrix Operations
+
+LSH Algorithm
+    - Read Node List
+    - Identify Number of Dimensions
+    - Identify the BoundingBox of the node set
+    - Subroutine Hash Nodes
+        == Input Node List, Dimensions, Bounding Box ==
+        - Foreach Node
+            - Hash node coordinates to indices {i,j,k} in a HNX-by-HNY-by-HNZ 
+              Cartesian Grid overlay in the domain. 
+        == Output {i,j,k} tuple list ==
+    - Subroutine Convert IJK to Morton
+        == Input {i,j,k} tuple list ==
+        - Foreach tuple
+            - Dialate 
+
+Ok i have the morton and u-orderings done. Now I need to do the LSH with them. The challenge here is: whats faster? A quicksort on nodes where we convert each index to morton inside a compare function or bulk convert all ijk to morton order before we sort. I would think the latter, but the code steve has actually avoids full dilation of the ijk indices, which would  be faster.
+
+In matlab I dont have any benefits of binary computing since most operations convert bin to strings. 
+
+
+
+LSH: 
+
+    - Need to modify lsh_overlay_grid; 
+        - Array of IJK indices/hashes  ( Save this array for indexing purposes )
+        - Bulk Convert Hashes to Morton/U/X/None (save this array for query purposes)
+        - Sort and condense hashes (save this array for storage purposes
