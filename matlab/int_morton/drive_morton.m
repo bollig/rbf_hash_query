@@ -33,7 +33,7 @@ clear ijkX ijkY ijkZ;
 % zlabel('j');
 
 if plotCurves
-    subplot(2,2,1);
+    subplot(2,3,3);
     plot3(nodes(:,1), nodes(:,2), nodes(:,3),'o-');
     title('Original (Raster) Order');
     axis([-1 NX -1 NX -1 NX]);
@@ -49,7 +49,7 @@ morton_ind = ijk_to_z(ijk_ind, DIM);
 s_nodes = nodes(morton_compressed_ind,:);
 
 if plotCurves
-    subplot(2,2,2);
+    subplot(2,3,5);
     plot3(s_nodes(:,1), s_nodes(:,2), s_nodes(:,3),'o-');
     title('Morton (Z) Order');
     axis([-1 NX -1 NX -1 NX]);
@@ -64,7 +64,7 @@ if testAll
     s_nodes = nodes(morton_compressed_ind,:);
     
     if plotCurves
-        subplot(2,2,3);
+        subplot(2,3,6);
         plot3(s_nodes(:,1), s_nodes(:,2), s_nodes(:,3),'o-');
         title('Gray-Code (U) Order');
         axis([-1 NX -1 NX -1 NX]);
@@ -77,9 +77,22 @@ if testAll
     s_nodes = nodes(morton_compressed_ind,:);
     
     if plotCurves
-        subplot(2,2,4);
+        subplot(2,3,4);
         plot3(s_nodes(:,1), s_nodes(:,2), s_nodes(:,3),'o-');
         title('Cross (X) Order');
+        axis([-1 NX -1 NX -1 NX]);
+        view(max(2,DIM))
+    end
+    
+     %% 4-node Z-order
+    morton_ind = ijk_to_4node_z(ijk_ind, DIM);
+    [temp morton_compressed_ind] = sort(morton_ind);
+    s_nodes = nodes(morton_compressed_ind,:);
+    
+    if plotCurves
+        subplot(2,3,2);
+        plot3(s_nodes(:,1), s_nodes(:,2), s_nodes(:,3),'o-');
+        title('4-nodes per Edge (Z) Order');
         axis([-1 NX -1 NX -1 NX]);
         view(max(2,DIM))
     end

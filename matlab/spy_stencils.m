@@ -9,6 +9,11 @@ for i = 1:N
         A(i,stencil_list(i,j)) = 1; 
     end
 end
+
+%% Find the bandwidth of the matrix
+[ii,jj] = find(A); 
+bandwidth = max(abs(ii-jj))
+
 spy(A, 5)
 
 end
