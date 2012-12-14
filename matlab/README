@@ -1,0 +1,6 @@
+This code currently does LSH using an explicit integer dilation and interleaving.
+
+After talking to Steve Henke today (2/13/12), I think we identified a few possible limitations in the floating point morton (i.e., directly ordering all nodes rather than doing an approximate sort). 
+    - Connor and Kumar do not handle the sign of the floats---they assume all points are positive.
+    - The spacing of floating point numbers can influence the ordering so numbers in [0,1]^2 uniformly sampled might be up to two nodes per edge.
+    - My code that generated the raster ordering in [0,1]^2 is definitely wrong.
