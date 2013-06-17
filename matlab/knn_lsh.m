@@ -93,7 +93,7 @@ else
             hold on;
             plot3(sorted_nodes(:,1), sorted_nodes(:,2), sorted_nodes(:,3), '-o');
             hold off;
-            pause
+            pause(1);
         end
     end
 end

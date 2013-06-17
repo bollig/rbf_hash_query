@@ -115,39 +115,41 @@ if debug
             rectangle('Position',recs(i,:),'LineStyle',':','FaceColor','y');
         end
     else
-        recs = unique([xmin+xc*cdx, ymin+yc*cdy, zmin+zc*cdz],'rows');
-        for i = 1:size(recs)
-            %% Coord of one vertex.
-            x1 = recs(i,1);
-            y1 = recs(i,2);
-            z1 = recs(i,3);
-            x2 = x1+cdx;
-            y2 = y1+cdy;
-            z2 = z1+cdz;
-            vert = [x1 y1 z1;
-                x1 y2 z1;
-                x2 y2 z1;
-                x2 y1 z1;
-                x1 y1 z2;
-                x1 y2 z2;
-                x2 y2 z2;
-                x2 y1 z2];
-            fac = [1 2 3 4; ...
-                2 6 7 3; ...
-                4 3 7 8; ...
-                1 5 8 4; ...
-                1 2 6 5; ...
-                5 6 7 8];
-            patch('Faces',fac,'Vertices',vert,'FaceColor','y');  % patch function
-            material shiny; 
-            alpha('color'); 
-            alphamap('spin'); 
+        if 0
+            recs = unique([xmin+xc*cdx, ymin+yc*cdy, zmin+zc*cdz],'rows');
+            for i = 1:size(recs)
+                %% Coord of one vertex.
+                x1 = recs(i,1);
+                y1 = recs(i,2);
+                z1 = recs(i,3);
+                x2 = x1+cdx;
+                y2 = y1+cdy;
+                z2 = z1+cdz;
+                vert = [x1 y1 z1;
+                    x1 y2 z1;
+                    x2 y2 z1;
+                    x2 y1 z1;
+                    x1 y1 z2;
+                    x1 y2 z2;
+                    x2 y2 z2;
+                    x2 y1 z2];
+                fac = [1 2 3 4; ...
+                    2 6 7 3; ...
+                    4 3 7 8; ...
+                    1 5 8 4; ...
+                    1 2 6 5; ...
+                    5 6 7 8];
+                patch('Faces',fac,'Vertices',vert,'FaceColor','y');  % patch function
+                material shiny;
+                alpha('color');
+                alphamap('spin');
+            end
+            light('Position',[1 3 2]);
+            light('Position',[-3 -1 3]);
+            camlight(45,45);
+            lighting phong
+            view(3);
         end
-        light('Position',[1 3 2]);
-        light('Position',[-3 -1 3]);
-        camlight(45,45);
-        lighting phong
-        view(3);
     end
 end
 end
