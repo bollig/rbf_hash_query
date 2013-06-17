@@ -56,6 +56,6 @@ addpath('int_morton')
 if debug
     figure
 end
-[sten snodes ch cp] = knn_lsh(nodes, 10, CELL_OVERLAY_NX, @ijk_to_z );
+[sten snodes ch cp] = knn_lsh(nodes, 10, CELL_OVERLAY_NX, @ijk_to_x );
 
 spy_stencils(sten);
