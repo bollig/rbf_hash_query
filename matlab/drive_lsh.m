@@ -1,8 +1,8 @@
 %clear all;
 
 DIM = 2;
-N = 100;
-CELL_OVERLAY_NX =10;
+N = 10;
+CELL_OVERLAY_NX =2;
 plotCurves = 1;
 
 %% 0: Regular Distribution; 1: Random Distribution; 2: Load Grid.
@@ -10,7 +10,7 @@ testNodeType=0
 
 
 global debug;
-debug =1; 
+debug =0; 
 
 
 if testNodeType==0

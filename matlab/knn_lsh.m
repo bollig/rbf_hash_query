@@ -15,6 +15,7 @@ end
 % indices lie within each cell.
 [cell_hashes, cell_ijk, cell_props] = lsh_overlay_grid(node_list, hnx, order_func);
 
+cell_props
 
 %% Sort our nodes according to the cell hashes. Does not sort within the
 %% cells!
@@ -53,14 +54,22 @@ else
        %% SHOW cells included in search as red 
     end
     
+    % For all nodes: 
     for  p = 1:size(sorted_nodes,1)
         % Start at center
         center_cell_ijk = sorted_cell_ijk(p,:);
         
         cell_ind = sorted_hashes(p); 
         
+        % while list of candidates < n (required stencil size)
+        %       append nodes in cells of rasterized circle of radius q
+        %       q = 0 (center)
+        %       q = 1 (center +/- -1:1^2 
+        %while 
+        q = 2;
+        
         % Append all nodes in center cell to list
-        nodes_in_cell_ind = getCellNodes(cell_ind, sorted_hashes); 
+        nodes_in_cell_ind = getCellNodes(cell_ind, sorted_hashes);
     end
     
     
@@ -75,11 +84,40 @@ end
 end
 
 function [node_ind] = getCellNodes(hash_ind, hash_list)
-left = 1; 
-right = 1; 
+% Need to get all nodes that have hash_ind (i.e., all nodes in cell
+% "hash_ind"
 
-while left && right 
+node_ind = find(hash_list == hash_ind);
 
 end
+
+function [cell_inds] = getCellNeighbors(hash_ind, radius, cell_props)
+
+N = cell_props.hnx;
+M = cell_props.hny; 
+L = cell_props.hnz;
+
+        crow = 3
+        ccol = 5
+                
+    index_of_cell = crow * (N) + (ccol)
+
+    % top and bottom
+    for ii = -q:1:q
+        index_of_top = (crow - q) * (N) + (ccol + ii)
+    end
+    for ii = -q:1:q
+        index_of_bottom = (crow + q) * (N) + (ccol + ii)
+    end
+    % left and right
+    % NOTE: subtract 1 from index range because the cells were already
+    % added by Top/Bottom
+    % TODO: if left > min, if right < max
+    for jj = -(q-1):1:(q-1)
+        index_of_left = (crow + jj) * (N) + (ccol - q)
+    end
+    for jj = -(q-1):1:(q-1)
+        index_of_right = (crow + jj) * (N) + (ccol + q)
+    end
 
 end
