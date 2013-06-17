@@ -58,7 +58,7 @@ else
         % Start at center
         center_cell_ijk = sorted_cell_ijk(p,:);
         
-        cell_ind = sorted_hashes(p); 
+        cell_ind = sorted_hashes(p)
         
         % while list of candidates < n (required stencil size)
         %       append nodes in cells of rasterized circle of radius q
@@ -67,7 +67,8 @@ else
         q = 0;
         neighbor_candidate_count = 0;
         neighbor_candidate_list = [];
-        while (neighbor_candidate_count < max_st_size) && (q < cell_props.hnx)
+        while (neighbor_candidate_count <= max_st_size) && (q < cell_props.hnx)
+            % Get this list of cells neighboring the cell_ind
             neighbor_cell_inds_rad_q = getCellNeighbors(cell_ind, center_cell_ijk, q, cell_props);
             neighbors_rad_q = 0; 
             
@@ -129,7 +130,7 @@ zc = hash_ijk(3);
 
 % KEY: this is how we get our index for the 3D overlay grid cell
 % ZERO based cell_id (we adjust by adding 1);
-node_cell_id = ((xc*cell_props.hny) + yc)*cell_props.hnz + zc + 1;
+node_cell_id = ((xc*cell_props.hny) + yc)*cell_props.hnz + zc ;
 
 % List of cell indices we will check
 % NOTE: in C++ we leverage std::set<size_t> here because it does NOT allow duplicates,
@@ -180,7 +181,7 @@ for xindx = 0-xlevel : 0+xlevel
                 continue;
             end
             
-            cell_id = ((xc_o*cell_props.hny) + yc_o)*cell_props.hnz + zc_o + 1;
+            cell_id = ((xc_o*cell_props.hny) + yc_o)*cell_props.hnz + zc_o ;
             
             % TODO: only append neighboring cells that contain
             % nodes?
