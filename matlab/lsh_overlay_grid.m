@@ -1,5 +1,5 @@
 
-function [cell_hash_ind, node_ijk_hashes, cell_props] = lsh_overlay_grid(node_list, hnx, index_func)
+function [cell_hash_ind, node_ijk_hashes, cell_props] = lsh_overlay_grid(node_list, hnx, index_func, dim)
 
 global debug;
 
@@ -7,8 +7,6 @@ global debug;
 % Dimensions of the hash overlay grid (hnx by hny by hnz regular grid
 % spanning the full bounding box of the domain extent)
 % NOTE: it works best for nearest neighbor if we have square/cube cells
-
-dim = 3;
 
 xmin = min(node_list(:,1));
 xmax = max(node_list(:,1));

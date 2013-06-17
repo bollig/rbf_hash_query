@@ -4,7 +4,7 @@ dim = props.dim;
 aspect_ratio = [1 1 1];
 hold on;
 
-stencil = stencils(j,:)
+stencil = stencils(j,:);
 x_j = nodes(j,:);
 max_rad = 0;
 for i = 1:length(stencil)

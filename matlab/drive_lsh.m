@@ -3,7 +3,7 @@
 DIM = 2;
 % Number of nodes in one dimension (ie., [N]^dim)
 N = 10;
-CELL_OVERLAY_NX = 4;
+CELL_OVERLAY_NX = N;
 plotCurves = 1;
 
 %% 0: Regular Distribution; 1: Random Distribution; 2: Load Grid.
@@ -56,6 +56,6 @@ addpath('int_morton')
 if debug
     figure
 end
-[sten snodes ch cp] = knn_lsh(nodes, 10, CELL_OVERLAY_NX, @ijk_to_x );
+[sten snodes ch cp] = knn_lsh(nodes, 10, CELL_OVERLAY_NX, 3, @ijk_to_x );
 
 spy_stencils(sten);

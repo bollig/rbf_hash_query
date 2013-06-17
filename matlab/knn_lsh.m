@@ -1,4 +1,4 @@
-function [stencils, sorted_nodes, sorted_hashes, cell_props] = knn_lsh(node_list, max_st_size, hnx, order_func)
+function [stencils, sorted_nodes, sorted_hashes, cell_props] = knn_lsh(node_list, max_st_size, hnx, dim, order_func)
 
 %% Use the KDtree to find nearest neighbors (inefficient)?
 useKDTree = 0;
@@ -14,7 +14,8 @@ end
 
 % cell_hashes are a collection of bins for each cell indicating which node
 % indices lie within each cell.
-[cell_hashes, cell_ijk, cell_props] = lsh_overlay_grid(node_list, hnx, order_func);
+[cell_hashes, cell_ijk, cell_props] = lsh_overlay_grid(node_list, hnx, order_func, dim);
+
 
 %% Sort our nodes according to the cell hashes. Does not sort within the
 %% cells!
@@ -38,7 +39,7 @@ if useKDTree
     addpath('kdtree')
     ktree = kdtree_build(sorted_nodes);
     
-    for i = 1:size(node_list,1)
+    for i = 1:size(sorted_nodes,1)
         sten = kdtree_k_nearest_neighbors(ktree, sorted_nodes(i,:), max_st_size);
         % reverse order
         stencils(i,:) = sten(end:-1:1);
@@ -137,6 +138,8 @@ zc = hash_ijk(3);
 % KEY: this is how we get our index for the 3D overlay grid cell
 % ZERO based cell_id (we adjust by adding 1);
 node_cell_id = ((xc*cell_props.hny) + yc)*cell_props.hnz + zc + 1;
+%node_cell_id = order_func([xc, yc, zc], cell_props.dim);
+
 
 % List of cell indices we will check
 % NOTE: in C++ we leverage std::set<size_t> here because it does NOT allow duplicates,
@@ -192,7 +195,7 @@ for xindx = 0-xlevel : 0+xlevel
             cell_id = ((xc_o*cell_props.hny) + yc_o)*cell_props.hnz + zc_o + 1;
             
             % Morton/Raster: 
-            cell_id = order_func([xc_o, yc_o, zc_o+1], cell_props.dim);
+            cell_id = order_func([xc_o, yc_o, zc_o], cell_props.dim);
             
             % TODO: only append neighboring cells that contain
             % nodes?
@@ -205,15 +208,14 @@ end
 end
 
 function [neighbors] = getNearestNeighbors(node, neighbor_candidate_list, node_coords, st_size)
-    neighbor_candidate_list
+    
     X = node_coords(neighbor_candidate_list,:);
-    X_c = node_coords(node,:) 
-    node
+    X_c = node_coords(node,:) ;
     M = size(neighbor_candidate_list,1);
     for i = 1:M
        dists(i,1) = sqrt(sum((X(i,:) - X_c).^2,2));
     end
     % Make sure we skim off the first n-neighbors
-    [temp ind] = sort(dists)
+    [temp ind] = sort(dists);
     neighbors = neighbor_candidate_list(ind(1:st_size,:));
 end

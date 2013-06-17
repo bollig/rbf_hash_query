@@ -15,5 +15,6 @@ else
     else 
 
     end
+    output_ind = ijk_ind
 end
 end
