@@ -1,20 +1,18 @@
-function [output_ind] = ijk_to_z(ijk_ind, dims)
-%% Produces a O_ijk-order (Raster)
-I = ijk_ind(:,1)-1; 
-J = ijk_ind(:,2)-1; 
-K = ijk_ind(:,3)-1;
+function [output_ind] = ijk_to_ijk(ijk_ind, dims)
+%% Produces a O_ijk-order 
+%% Requires ijk_ind to start at 0. 
+I = ijk_ind(:,1)
+J = ijk_ind(:,2)
+K = ijk_ind(:,3)
 
-%% We dont want more than 1 neighbor in the same dimension before switching
-%% to other dimensions
-edge = dims-1;
+min_i = min(I);
+max_i = max(I);
 
-if (dims < 2)
-    output_ind = ijk_ind(:,1); 
-else
-    if (dims > 2)
-    else 
+min_j = min(I);
+max_j = max(I);
 
-    end
-    output_ind = ijk_ind
-end
+min_k = min(I);
+max_k = max(I);
+
+output_ind = I * N;
 end

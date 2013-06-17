@@ -15,7 +15,7 @@ debug =1;
 
 
 if testNodeType==0
-    NX = CELL_OVERLAY_NX*2;
+    NX = CELL_OVERLAY_NX*1;
     %NX = N;
     if DIM == 1
         [nodeX, nodeY, nodeZ] = meshgrid(0:NX-1,0,0);
@@ -56,6 +56,6 @@ addpath('int_morton')
 if debug
     figure
 end
-[sten snodes ch cp] = knn_lsh(nodes, 10, CELL_OVERLAY_NX, 3, @ijk_to_x );
+[sten snodes ch cp] = knn_lsh(nodes, 10, CELL_OVERLAY_NX, 3, @ijk_to_u );
 
 spy_stencils(sten);
