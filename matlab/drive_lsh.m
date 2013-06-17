@@ -11,7 +11,7 @@ testNodeType=0
 
 
 global debug;
-debug =0; 
+debug =1; 
 
 
 if testNodeType==0

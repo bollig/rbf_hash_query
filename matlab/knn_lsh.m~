@@ -7,13 +7,14 @@ global debug;
 
 if debug
     hold on
-    %plot3(node_list(:,1), node_list(:,2), node_list(:,3), 'r.--');
+    plot3(node_list(:,1), node_list(:,2), node_list(:,3), 'r.--');
     hold off;
+    pause
 end
 
 % cell_hashes are a collection of bins for each cell indicating which node
 % indices lie within each cell.
-[cell_hashes, cell_ijk, cell_props] = lsh_overlay_grid(node_list, hnx, order_func)
+[cell_hashes, cell_ijk, cell_props] = lsh_overlay_grid(node_list, hnx, order_func);
 
 %% Sort our nodes according to the cell hashes. Does not sort within the
 %% cells!
@@ -30,6 +31,7 @@ if debug
     hold on;
     plot3(sorted_nodes(:,1), sorted_nodes(:,2), sorted_nodes(:,3), '-o');
     hold off;
+    pause
 end
 
 if useKDTree
@@ -69,58 +71,62 @@ else
         neighbor_candidate_list = [];
         while (neighbor_candidate_count <= max_st_size) && (q < cell_props.hnx)
             % Get this list of cells neighboring the cell_ind
-            neighbor_cell_inds_rad_q = getCellNeighbors(cell_ind, center_cell_ijk, q, cell_props);
+            neighbor_cell_inds_rad_q = getCellNeighbors(cell_ind, center_cell_ijk, q, cell_props, order_func);
             neighbors_rad_q = 0; 
-            
             % For each cell, append node list
             % if node list gets large enough we can break loop (only after
             % we append all nodes in radius
             for pq = 1:size(neighbor_cell_inds_rad_q)
-                neighbor_cell_nodes = getCellNodes(neighbor_cell_inds_rad_q(pq), sorted_hashes);
-                neighbor_candidate_list = [neighbor_candidate_list; neighbor_cell_nodes];
-                neighbors_rad_q = neighbors_rad_q + size(neighbor_cell_nodes,1);
+                neighbor_cell_node_ind = getCellNodes(neighbor_cell_inds_rad_q(pq), sorted_hashes);
+                neighbor_candidate_list = [neighbor_candidate_list; neighbor_cell_node_ind];
+                neighbors_rad_q = neighbors_rad_q + size(neighbor_cell_node_ind,1);
             end
             neighbor_candidate_count = neighbor_candidate_count + neighbors_rad_q;
             q = q + 1;
         end
-        neighbor_candidate_count
-        neighbor_candidate_list
-        sten = getNearestNeighbors(p, neighbor_candidate_list, sorted_nodes, min(neighbor_candidate_count, max_st_size));
+        stencils(p,:) = getNearestNeighbors(p, neighbor_candidate_list, sorted_nodes, min(neighbor_candidate_count, max_st_size))
+   if debug
+       hold off;
+        
+       plot_stencil(p, stencils, sorted_nodes, cell_props);
+       hold on;
+       plot3(sorted_nodes(:,1), sorted_nodes(:,2), sorted_nodes(:,3), '-o');
+       hold off;
+       pause
+   end
     end
-    
-    %[stencils] = knn_overlay_query(sorted_nodes, sorted_hashes, sorted_cell_ijk, cell_props, max_st_size);
 end
 
 if debug
-    hold on;
+%    hold on;
     plot_stencil(10, stencils, sorted_nodes, cell_props);
-    hold off;
+%    hold off;
+    pause
 end
 end
 
 function [node_ind] = getCellNodes(hash_ind, hash_list)
 % Need to get all nodes that have hash_ind (i.e., all nodes in cell
 % "hash_ind"
-
 node_ind = find(hash_list == hash_ind);
 
 end
 
 
-function [ijk_cell_inds] = getCellNeighbors(hash_ind, hash_ijk, radius, cell_props)
+function [ijk_cell_inds] = getCellNeighbors(hash_ind, hash_ijk, radius, cell_props, order_func)
     if radius < 1
         ijk_cell_inds = hash_ind;
         return;
     end
 
-    outer_cells = getAllCells(radius,hash_ijk,cell_props);
-    inner_cells = getAllCells(radius-1,hash_ijk,cell_props);
+    outer_cells = getAllCells(radius, hash_ijk, cell_props, order_func);
+    inner_cells = getAllCells(radius-1, hash_ijk, cell_props, order_func);
 
     ijk_cell_inds = setdiff(outer_cells, inner_cells);
 end
 
 
-function [level_neighbor_set] = getAllCells(level, hash_ijk, cell_props)
+function [level_neighbor_set] = getAllCells(level, hash_ijk, cell_props, order_func)
 
 %hash_ijk
 %cell_props
@@ -130,7 +136,7 @@ zc = hash_ijk(3);
 
 % KEY: this is how we get our index for the 3D overlay grid cell
 % ZERO based cell_id (we adjust by adding 1);
-node_cell_id = ((xc*cell_props.hny) + yc)*cell_props.hnz + zc ;
+node_cell_id = ((xc*cell_props.hny) + yc)*cell_props.hnz + zc + 1;
 
 % List of cell indices we will check
 % NOTE: in C++ we leverage std::set<size_t> here because it does NOT allow duplicates,
@@ -182,7 +188,11 @@ for xindx = 0-xlevel : 0+xlevel
                 continue;
             end
             
-            cell_id = ((xc_o*cell_props.hny) + yc_o)*cell_props.hnz + zc_o ;
+            % Raster:
+            cell_id = ((xc_o*cell_props.hny) + yc_o)*cell_props.hnz + zc_o + 1;
+            
+            % Morton/Raster: 
+            cell_id = order_func([xc_o, yc_o, zc_o+1], cell_props.dim);
             
             % TODO: only append neighboring cells that contain
             % nodes?
@@ -195,14 +205,15 @@ end
 end
 
 function [neighbors] = getNearestNeighbors(node, neighbor_candidate_list, node_coords, st_size)
-    node
     neighbor_candidate_list
-    node_coords
-    st_size
-    X = node_coords(neighbor_candidate_list,:) 
-    X_c = node_coords(node,:) 
-    M = size(neighbor_candidate_list,1)
+    X = node_coords(neighbor_candidate_list,:);
+    X_c = node_coords(node,:) ;
+    M = size(neighbor_candidate_list,1);
     for i = 1:M
        dists(i,1) = sqrt(sum((X(i,:) - X_c).^2,2));
     end
+    dists
+    % Make sure we skim off the first n-neighbors
+    [temp ind] = sort(dists);
+    neighbors = ind(1:st_size,:);
 end

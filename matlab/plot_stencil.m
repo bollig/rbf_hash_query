@@ -3,13 +3,13 @@ function plot_stencil(j, stencils, nodes, props)
 dim = props.dim;
 aspect_ratio = [1 1 1];
 hold on;
-stencil = stencils(j,1:end);
-x_j = nodes(stencil(1),:);
+
+stencil = stencils(j,:)
+x_j = nodes(j,:);
 max_rad = 0;
 for i = 1:length(stencil)
     x_i = nodes(stencil(i), :);
     segment = [x_i; x_j];
-    
     rad = sqrt((x_i - x_j) * (x_i - x_j)');
     if (max_rad < rad)
         max_rad = rad;
