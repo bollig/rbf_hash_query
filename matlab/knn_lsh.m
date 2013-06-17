@@ -58,7 +58,7 @@ else
         % Start at center
         center_cell_ijk = sorted_cell_ijk(p,:);
         
-        cell_ind = sorted_hashes(p)
+        cell_ind = sorted_hashes(p);
         
         % while list of candidates < n (required stencil size)
         %       append nodes in cells of rasterized circle of radius q
@@ -83,10 +83,10 @@ else
             neighbor_candidate_count = neighbor_candidate_count + neighbors_rad_q;
             q = q + 1;
         end
+        neighbor_candidate_count
+        neighbor_candidate_list
+        sten = getNearestNeighbors(p, neighbor_candidate_list, sorted_nodes, min(neighbor_candidate_count, max_st_size));
     end
-    
-    neighbor_candidate_count
-    neighbor_candidate_list
     
     %[stencils] = knn_overlay_query(sorted_nodes, sorted_hashes, sorted_cell_ijk, cell_props, max_st_size);
 end
@@ -159,7 +159,8 @@ end
 % search
 nb_neighbor_cells_to_check = 0;
 
-%NOTE: might need a +1 here:
+% NOTE: we can add a dense grid of cells because we get the current level
+% minus the previous set (to get the sparse shell)
 for xindx = 0-xlevel : 0+xlevel
     for yindx = 0-ylevel : 0+ylevel
         for zindx = 0-zlevel : 0+zlevel
@@ -191,4 +192,15 @@ for xindx = 0-xlevel : 0+xlevel
     end
 end
 
+end
+
+function [neighbors] = getNearestNeighbors(node, neighbor_candidate_list, node_coords, st_size)
+    node
+    neighbor_candidate_list
+    node_coords
+    st_size
+    (neighbor_candidate_list - node)
+    (neighbor_candidate_list - node).^2
+    dists = sqrt((neighbor_candidate_list - node).^2)
+    
 end

@@ -1,6 +1,6 @@
 %clear all;
 
-DIM = 1;
+DIM = 2;
 % Number of nodes in one dimension (ie., [N]^dim)
 N = 10;
 CELL_OVERLAY_NX = 4;
