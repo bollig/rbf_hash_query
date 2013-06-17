@@ -1,6 +1,6 @@
 %clear all;
 
-DIM = 3;
+DIM = 1;
 % Number of nodes in one dimension (ie., [N]^dim)
 N = 4;
 CELL_OVERLAY_NX = 4;
@@ -51,6 +51,6 @@ addpath('int_morton')
 if debug
     figure
 end
-[sten snodes ch cp] = knn_lsh(nodes, 18, CELL_OVERLAY_NX, 3, @ijk_to_u );
+[sten snodes ch cp] = knn_lsh(nodes, 18, CELL_OVERLAY_NX, 3, @ijk_to_z );
 
 spy_stencils(sten);
