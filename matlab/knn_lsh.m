@@ -85,7 +85,7 @@ else
         end
         neighbor_candidate_count
         neighbor_candidate_list
-        sten = getNearestNeighbors(p, neighbor_candidate_list, sorted_nodes, min(neighbor_candidate_count, max_st_size));
+        stencils(p,:) = getNearestNeighbors(p, neighbor_candidate_list, sorted_nodes, min(neighbor_candidate_count, max_st_size));
     end
     
     %[stencils] = knn_overlay_query(sorted_nodes, sorted_hashes, sorted_cell_ijk, cell_props, max_st_size);
@@ -195,12 +195,13 @@ end
 end
 
 function [neighbors] = getNearestNeighbors(node, neighbor_candidate_list, node_coords, st_size)
-    node
-    neighbor_candidate_list
-    node_coords
-    st_size
-    (neighbor_candidate_list - node)
-    (neighbor_candidate_list - node).^2
-    dists = sqrt((neighbor_candidate_list - node).^2)
-    
+    X = node_coords(neighbor_candidate_list,:) ;
+    X_c = node_coords(node,:) ;
+    M = size(neighbor_candidate_list,1);
+    for i = 1:M
+       dists(i,1) = sqrt(sum((X(i,:) - X_c).^2,2));
+    end
+    % Make sure we skim off the first n-neighbors
+    [temp ind] = sort(dists);
+    neighbors = ind(1:st_size);
 end
