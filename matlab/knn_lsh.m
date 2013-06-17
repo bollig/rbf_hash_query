@@ -106,7 +106,9 @@ node_ind = find(hash_list == hash_ind);
 end
 
 function [ijk_cell_inds] = getCellNeighbors(hash_ind, hash_ijk, radius, cell_props)
- 
+
+  hash_ijk 
+
  cx = hash_ijk(1);
  cy = hash_ijk(2);
  cz = hash_ijk(3);
@@ -115,7 +117,7 @@ function [ijk_cell_inds] = getCellNeighbors(hash_ind, hash_ijk, radius, cell_pro
  cell_props
  
  % 2D works. genearlize to 3D...
- if cell_props.dim <= 2
+ if cell_props.dim == 2
     index_of_cell = cx * (cell_props.hnx) + (cy)
 
 %     Test radius > 0 as failsafe
@@ -165,59 +167,47 @@ function [ijk_cell_inds] = getCellNeighbors(hash_ind, hash_ijk, radius, cell_pro
     end
     
  else
-     
-     fprintf('ERROR: need to finish 3D (knn_lsh.m)');
-     return ; 
-     
-    index_of_cell = (cx * (cell_props.hny) + cy) * (cell_props.hnz) + cz
+     hash_ind
+     hash_ijk
+     index_of_cell = (cx * (cell_props.hnx) + cy)*(cell_props.hny) + cz
 
-%     Test radius > 0 as failsafe
-    if (radius <= 0)
-        ijk_cell_inds = index_of_cell;
-        return;
-    end
-        
-%     top and bottom
-    for pp = -radius:1:radius
-        row = (cx - radius);
-        col = (cy + pp);
-        if row >= 0 && col >= 0 && row < cell_props.hnx && col < cell_props.hny
-            index_of_top = row * cell_props.hnx + col;
-            ijk_cell_inds = [ijk_cell_inds; index_of_top];
-        end
-    end
-
-    for pp = -radius:1:radius
-        row = (cx + radius);
-        col = (cy + pp);
-        if row >= 0 && col >= 0 && row < cell_props.hnx && col < cell_props.hny
-            index_of_bottom = row * cell_props.hnx + col;
-            ijk_cell_inds = [ijk_cell_inds; index_of_bottom];
-        end
-    end
-   
-%     left and right
-%     NOTE: subtract 1 from index range because the cells were already
-%     added by Top/Bottom
-%     TODO: if left > min, if right < max
-    for qq = -(radius-1):1:(radius-1)
-        row = (cx + qq);
-        col = (cy - radius);
-        if row >= 0 && col >= 0 && row < cell_props.hnx && col < cell_props.hny
-            index_of_left = row * cell_props.hnx + col;
-            ijk_cell_inds = [ijk_cell_inds; index_of_left];
-        end
-    end
-    for qq = -(radius-1):1:(radius-1)
-        row = (cx + qq);
-        col = (cy + radius);
-        if row >= 0 && col >= 0 && row < cell_props.hnx && col < cell_props.hny
-            index_of_right = row * cell_props.hnx + col;
-            ijk_cell_inds = [ijk_cell_inds; index_of_right];
-        end
-    end
-        
      
-    end
-
+     
+     %NOTE: might need a +1 here:
+     for xindx = 0-xlevel : 0+xlevel
+         for yindx = 0-ylevel : 0+ylevel
+             for zindx = 0-zlevel : 0+zlevel
+                 % Offset cell
+%                     xc_o = (xc + xindx);
+%                     yc_o = (yc + yindx);
+%                     zc_o = (zc + zindx);
+%                     
+%                     % If the neighbor cell is outside our overlay we ignore the task
+%                     if ((xc_o < 0) || (xc_o >= hnx))
+%                         continue;
+%                     end
+% 
+%                     if ((yc_o < 0) || (yc_o >= hny))
+%                         continue;
+%                     end
+% 
+%                     if ((zc_o < 0) || (zc_o >= hny))
+%                         continue;
+%                     end
+% 
+%                     cell_id = ((xc_o*hny) + yc_o)*hnz + zc_o + 1;
+% 
+%                     % only bother appending neighboring cells that contain
+%                     % nodes.
+%                     % gets all node ids contained in the cell
+%                     l = sum(cell_hash(cell_id,:) > 0);
+%                     if (l > 0)
+%                         %neighbor_cell_set.insert(cell_id);
+%                         level_neighbor_set(end+1) = cell_id;
+%                         nb_neighbor_nodes_to_check = nb_neighbor_nodes_to_check + l;
+%                     end
+%                 end
+%             end
+%         end
+ end
 end
