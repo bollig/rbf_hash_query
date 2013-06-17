@@ -106,19 +106,19 @@ node_ind = find(hash_list == hash_ind);
 end
 
 function [ijk_cell_inds] = getCellNeighbors(hash_ind, hash_ijk, radius, cell_props)
-
-  hash_ijk 
-
- cx = hash_ijk(1);
- cy = hash_ijk(2);
- cz = hash_ijk(3);
-
- ijk_cell_inds = [];
- cell_props
  
  % 2D works. genearlize to 3D...
  if cell_props.dim == 2
-    index_of_cell = cx * (cell_props.hnx) + (cy)
+     hash_ijk
+     
+     cx = hash_ijk(1);
+     cy = hash_ijk(2);
+     cz = hash_ijk(3);
+     
+     ijk_cell_inds = [];
+     cell_props
+     
+     index_of_cell = cx * (cell_props.hnx) + (cy)
 
 %     Test radius > 0 as failsafe
     if (radius <= 0)
@@ -165,49 +165,114 @@ function [ijk_cell_inds] = getCellNeighbors(hash_ind, hash_ijk, radius, cell_pro
             ijk_cell_inds = [ijk_cell_inds; index_of_right];
         end
     end
-    
  else
+    error('incomplete support. use dim = 2')
+ end
+end
+
+
+function [ijk_cell_inds] = getCellNeighbors(hash_ind, hash_ijk, radius, cell_props)
      hash_ind
      hash_ijk
-     index_of_cell = (cx * (cell_props.hnx) + cy)*(cell_props.hny) + cz
-
-     
-     
-     %NOTE: might need a +1 here:
-     for xindx = 0-xlevel : 0+xlevel
-         for yindx = 0-ylevel : 0+ylevel
-             for zindx = 0-zlevel : 0+zlevel
-                 % Offset cell
-%                     xc_o = (xc + xindx);
-%                     yc_o = (yc + yindx);
-%                     zc_o = (zc + zindx);
-%                     
-%                     % If the neighbor cell is outside our overlay we ignore the task
-%                     if ((xc_o < 0) || (xc_o >= hnx))
-%                         continue;
-%                     end
+     xc = hash_ijk(1);
+     yc = hash_ijk(2);
+     zc = hash_ijk(3);
+   
+    % KEY: this is how we get our index for the 3D overlay grid cell
+    % ZERO based cell_id (we adjust by adding 1);
+    node_cell_id = ((xc*cell_props.hny) + yc)*cell_props.hnz + zc + 1
+    
+    % List of cell indices we will check
+    % NOTE: in C++ we leverage std::set<size_t> here because it does NOT allow duplicates,
+    % so cells are not searched twice. In Matlab we need to use 'unique' to
+    % remove duplicates:
+    %       [junk,index] = unique(y,'first');        %# Capture the index, ignore junk
+    %        y = y(sort(index))
+    % In reality, this can be further optimized by NOT appending
+    % previous cells. However, this step does not cost a lot of
+    % overhead for current applications.
+    neighbor_cell_set = [];
+    
+    % Generate a list of cells to check for nearest neighbors
+    % For each node expand the search until the max_st_size can be satisifed
+    % DO NOT check cells with 0 node inside
+    nb_neighbor_nodes_to_check = 0;
+    level = 0;
+    
+    % TODO: cut-off search if (max_st_radius+cdx) is execeeded
+    %          (requires a working impl of max_st_radius)o
+    % BUGFIX: this (level < 2) guarantees we searching neighboring cells
+    % in the event that we're near the boundary of a cell and the current
+    % cell has more than enough nodes to exceed max_st_size.
+    while (nb_neighbor_nodes_to_check < max_st_size) || (level < 2)
+        level_neighbor_set = [];
+        xlevel = level;
+        ylevel = 0;
+        zlevel = 0;
+        if hny > 1
+            ylevel = level;
+        end
+        if hnz > 1
+            zlevel = level;
+        end
+        
+        % Now count the number of nodes we'll be checking.
+        % If its greater than max_st_size then we can stop expanding
+        % search
+        nb_neighbor_nodes_to_check = 0;
+        
+        %NOTE: might need a +1 here:
+        for xindx = 0-xlevel : 0+xlevel
+            for yindx = 0-ylevel : 0+ylevel
+                for zindx = 0-zlevel : 0+zlevel
+                    % Offset cell
+                    xc_o = (xc + xindx);
+                    yc_o = (yc + yindx);
+                    zc_o = (zc + zindx);
+                    
+                    % If the neighbor cell is outside our overlay we ignore the task
+                    if ((xc_o < 0) || (xc_o >= hnx))
+                        continue;
+                    end
+                    
+                    if ((yc_o < 0) || (yc_o >= hny))
+                        continue;
+                    end
+                    
+                    if ((zc_o < 0) || (zc_o >= hny))
+                        continue;
+                    end
+                    
+                    cell_id = ((xc_o*hny) + yc_o)*hnz + zc_o + 1;
+                    
+                    % only bother appending neighboring cells that contain
+                    % nodes.
+                    % gets all node ids contained in the cell
+                    l = sum(cell_hash(cell_id,:) > 0);
+                    if (l > 0)
+                        %neighbor_cell_set.insert(cell_id);
+                        level_neighbor_set(end+1) = cell_id;
+                        nb_neighbor_nodes_to_check = nb_neighbor_nodes_to_check + l;
+                    end
+                end
+            end
+        end
+        
 % 
-%                     if ((yc_o < 0) || (yc_o >= hny))
-%                         continue;
-%                     end
-% 
-%                     if ((zc_o < 0) || (zc_o >= hny))
-%                         continue;
-%                     end
-% 
-%                     cell_id = ((xc_o*hny) + yc_o)*hnz + zc_o + 1;
-% 
-%                     % only bother appending neighboring cells that contain
-%                     % nodes.
-%                     % gets all node ids contained in the cell
-%                     l = sum(cell_hash(cell_id,:) > 0);
-%                     if (l > 0)
-%                         %neighbor_cell_set.insert(cell_id);
-%                         level_neighbor_set(end+1) = cell_id;
-%                         nb_neighbor_nodes_to_check = nb_neighbor_nodes_to_check + l;
-%                     end
-%                 end
-%             end
+%         for it = 1:length(level_neighbor_set)
+%             cell_id = level_neighbor_set(it);
+%             nb_neighbor_nodes_to_check = nb_neighbor_nodes_to_check + length(cell_hash(cell_id,:));
 %         end
- end
+        
+        % Increase our search radius
+        level = level + 1;
+    end
+    
+    % This removes duplicates and keeps the id's ordered in the fashion
+    % they were first appended to the list (helps minimize shuffling of
+    % nearest neighbor indices)
+    [junk,srt_index] = unique(level_neighbor_set,'first');        %# Capture the index, ignore junk
+    %fprintf('NODE: %f %f %f is in CELL: %d and Querying %d distances in these CELLs:\n', node(1), node(2), node(3), node_cell_id, nb_neighbor_nodes_to_check);
+    neighbor_cell_set = level_neighbor_set(sort(srt_index));
+
 end
