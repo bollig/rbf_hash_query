@@ -84,16 +84,16 @@ else
             neighbor_candidate_count = neighbor_candidate_count + neighbors_rad_q;
             q = q + 1;
         end
-        stencils(p,:) = getNearestNeighbors(p, neighbor_candidate_list, sorted_nodes, min(neighbor_candidate_count, max_st_size))
-   if debug
-       hold off;
-        
-       plot_stencil(p, stencils, sorted_nodes, cell_props);
-       hold on;
-       plot3(sorted_nodes(:,1), sorted_nodes(:,2), sorted_nodes(:,3), '-o');
-       hold off;
-       pause
-   end
+        stencils(p,:) = getNearestNeighbors(p, neighbor_candidate_list, sorted_nodes, min(neighbor_candidate_count, max_st_size));
+        if debug
+            hold off;
+            delete(gca);
+            plot_stencil(p, stencils, sorted_nodes, cell_props);
+            hold on;
+            plot3(sorted_nodes(:,1), sorted_nodes(:,2), sorted_nodes(:,3), '-o');
+            hold off;
+            pause
+        end
     end
 end
 
@@ -207,13 +207,13 @@ end
 function [neighbors] = getNearestNeighbors(node, neighbor_candidate_list, node_coords, st_size)
     neighbor_candidate_list
     X = node_coords(neighbor_candidate_list,:);
-    X_c = node_coords(node,:) ;
+    X_c = node_coords(node,:) 
+    node
     M = size(neighbor_candidate_list,1);
     for i = 1:M
        dists(i,1) = sqrt(sum((X(i,:) - X_c).^2,2));
     end
-    dists
     % Make sure we skim off the first n-neighbors
-    [temp ind] = sort(dists);
-    neighbors = ind(1:st_size,:);
+    [temp ind] = sort(dists)
+    neighbors = neighbor_candidate_list(ind(1:st_size,:);
 end
