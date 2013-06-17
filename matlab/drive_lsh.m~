@@ -1,5 +1,0 @@
-addpath('int_morton')
-
-nodes = load('loadedgrid_1024nodes_final.ascii'); 
-
-knn
