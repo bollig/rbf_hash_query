@@ -13,14 +13,13 @@ end
 
 % cell_hashes are a collection of bins for each cell indicating which node
 % indices lie within each cell.
-[cell_hashes, cell_ijk, cell_props] = lsh_overlay_grid(node_list, hnx, order_func);
-
-cell_props
+[cell_hashes, cell_ijk, cell_props] = lsh_overlay_grid(node_list, hnx, order_func)
 
 %% Sort our nodes according to the cell hashes. Does not sort within the
 %% cells!
 [sorted_hashes s_ind] = sort(cell_hashes);
 sorted_nodes = node_list(s_ind,:);
+
 
 %% This is our map to go from the Z order cells to IJK
 sorted_cell_ijk = cell_ijk(s_ind,:);
@@ -65,11 +64,26 @@ else
         %       append nodes in cells of rasterized circle of radius q
         %       q = 0 (center)
         %       q = 1 (center +/- -1:1^2 
-        %while 
-        q = 2;
-        
-        % Append all nodes in center cell to list
         nodes_in_cell_ind = getCellNodes(cell_ind, sorted_hashes);
+        q = 0;
+        neighbor_candidate_count = 0;
+        neighbor_candidate_list = [];
+        while neighbor_candidate_count < max_st_size
+            neighbor_cell_inds_rad_q = getCellNeighbors(cell_ind, center_cell_ijk, q, cell_props)
+            neighbors_rad_q = 0; 
+            for pq = 1:size(neighbor_cell_inds_rad_q)
+                neighbor_cell_nodes = getCellNodes(neighbor_cell_inds_rad_q(pq), sorted_hashes)
+                neighbor_candidate_list = [neighbor_candidate_list; neighbor_cell_nodes];
+                neighbors_rad_q = neighbors_rad_q + size(neighbor_cell_nodes,1)
+            end
+            neighbor_candidate_count = neighbor_candidate_count + neighbors_rad_q
+            q = q+1; 
+        end
+        
+        neighbor_candidate_count
+        neighbor_candidate_list
+        % Append all nodes in center cell to list
+        
     end
     
     
@@ -91,33 +105,119 @@ node_ind = find(hash_list == hash_ind);
 
 end
 
-function [cell_inds] = getCellNeighbors(hash_ind, radius, cell_props)
+function [ijk_cell_inds] = getCellNeighbors(hash_ind, hash_ijk, radius, cell_props)
+ 
+ cx = hash_ijk(1);
+ cy = hash_ijk(2);
+ cz = hash_ijk(3);
 
-N = cell_props.hnx;
-M = cell_props.hny; 
-L = cell_props.hnz;
+ ijk_cell_inds = [];
+ cell_props
+ 
+ % 2D works. genearlize to 3D...
+ if cell_props.dim <= 2
+    index_of_cell = cx * (cell_props.hnx) + (cy)
 
-        crow = 3
-        ccol = 5
-                
-    index_of_cell = crow * (N) + (ccol)
+%     Test radius > 0 as failsafe
+    if (radius <= 0)
+        ijk_cell_inds = index_of_cell;
+        return;
+    end
+        
+%     top and bottom
+    for pp = -radius:1:radius
+        row = (cx - radius);
+        col = (cy + pp);
+        if row >= 0 && col >= 0 && row < cell_props.hnx && col < cell_props.hny
+            index_of_top = row * cell_props.hnx + col;
+            ijk_cell_inds = [ijk_cell_inds; index_of_top];
+        end
+    end
 
-    % top and bottom
-    for ii = -q:1:q
-        index_of_top = (crow - q) * (N) + (ccol + ii)
+    for pp = -radius:1:radius
+        row = (cx + radius);
+        col = (cy + pp);
+        if row >= 0 && col >= 0 && row < cell_props.hnx && col < cell_props.hny
+            index_of_bottom = row * cell_props.hnx + col;
+            ijk_cell_inds = [ijk_cell_inds; index_of_bottom];
+        end
     end
-    for ii = -q:1:q
-        index_of_bottom = (crow + q) * (N) + (ccol + ii)
+   
+%     left and right
+%     NOTE: subtract 1 from index range because the cells were already
+%     added by Top/Bottom
+%     TODO: if left > min, if right < max
+    for qq = -(radius-1):1:(radius-1)
+        row = (cx + qq);
+        col = (cy - radius);
+        if row >= 0 && col >= 0 && row < cell_props.hnx && col < cell_props.hny
+            index_of_left = row * cell_props.hnx + col;
+            ijk_cell_inds = [ijk_cell_inds; index_of_left];
+        end
     end
-    % left and right
-    % NOTE: subtract 1 from index range because the cells were already
-    % added by Top/Bottom
-    % TODO: if left > min, if right < max
-    for jj = -(q-1):1:(q-1)
-        index_of_left = (crow + jj) * (N) + (ccol - q)
+    for qq = -(radius-1):1:(radius-1)
+        row = (cx + qq);
+        col = (cy + radius);
+        if row >= 0 && col >= 0 && row < cell_props.hnx && col < cell_props.hny
+            index_of_right = row * cell_props.hnx + col;
+            ijk_cell_inds = [ijk_cell_inds; index_of_right];
+        end
     end
-    for jj = -(q-1):1:(q-1)
-        index_of_right = (crow + jj) * (N) + (ccol + q)
+    
+ else
+     
+     fprintf('ERROR: need to finish 3D (knn_lsh.m)');
+     return ; 
+     
+    index_of_cell = (cx * (cell_props.hny) + cy) * (cell_props.hnz) + cz
+
+%     Test radius > 0 as failsafe
+    if (radius <= 0)
+        ijk_cell_inds = index_of_cell;
+        return;
+    end
+        
+%     top and bottom
+    for pp = -radius:1:radius
+        row = (cx - radius);
+        col = (cy + pp);
+        if row >= 0 && col >= 0 && row < cell_props.hnx && col < cell_props.hny
+            index_of_top = row * cell_props.hnx + col;
+            ijk_cell_inds = [ijk_cell_inds; index_of_top];
+        end
+    end
+
+    for pp = -radius:1:radius
+        row = (cx + radius);
+        col = (cy + pp);
+        if row >= 0 && col >= 0 && row < cell_props.hnx && col < cell_props.hny
+            index_of_bottom = row * cell_props.hnx + col;
+            ijk_cell_inds = [ijk_cell_inds; index_of_bottom];
+        end
+    end
+   
+%     left and right
+%     NOTE: subtract 1 from index range because the cells were already
+%     added by Top/Bottom
+%     TODO: if left > min, if right < max
+    for qq = -(radius-1):1:(radius-1)
+        row = (cx + qq);
+        col = (cy - radius);
+        if row >= 0 && col >= 0 && row < cell_props.hnx && col < cell_props.hny
+            index_of_left = row * cell_props.hnx + col;
+            ijk_cell_inds = [ijk_cell_inds; index_of_left];
+        end
+    end
+    for qq = -(radius-1):1:(radius-1)
+        row = (cx + qq);
+        col = (cy + radius);
+        if row >= 0 && col >= 0 && row < cell_props.hnx && col < cell_props.hny
+            index_of_right = row * cell_props.hnx + col;
+            ijk_cell_inds = [ijk_cell_inds; index_of_right];
+        end
+    end
+        
+     
     end
 
 end
