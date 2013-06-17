@@ -1,10 +1,12 @@
-function [output_ind] = ijk_to_u(ijk_ind, dims)
+function [output_ind] = ijk_to_u(ijk_ind, cell_props)
 %% Produces a O_U-order (Fig 9, (C)) 
 %% Uncommont the alternates to get variations
 %% Requires ijk_ind to start at 0. 
 I = ijk_ind(:,1);
 J = ijk_ind(:,2);
 K = ijk_ind(:,3);
+
+dims = cell_props.dim;
 
 %% We dont want more than 1 neighbor in the same dimension before switching
 %% to other dimensions

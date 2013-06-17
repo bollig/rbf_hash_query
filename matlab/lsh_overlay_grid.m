@@ -84,11 +84,28 @@ end
 % functions, but we can combine them into one below.
 node_ijk_hashes = [xc, yc, zc];
 
-%cell_ijk = ((xc.*hny) + yc).*hnz + zc;
+cell_ijk = ((xc.*hny) + yc).*hnz + zc;
+
+% This struct will be essential later
+cell_props.hnx=hnx;
+cell_props.hny=hny;
+cell_props.hnz=hnz;
+cell_props.xmin=xmin;
+cell_props.xmax=xmax;
+cell_props.ymin=ymin;
+cell_props.ymax=ymax;
+cell_props.zmin=zmin;
+cell_props.zmax=zmax;
+cell_props.cdx = cdx;
+cell_props.cdy = cdy;
+cell_props.cdz = cdz;
+cell_props.dim = dim; 
+
+
 
 % KEY: this is how we get our index for the 3D overlay grid cell
 % ZERO based cell_id (we adjust by adding 1);
-cell_hash_ind = index_func(node_ijk_hashes, dim);
+cell_hash_ind = index_func(node_ijk_hashes, cell_props);
 
 if debug
     if dim==2
@@ -133,17 +150,4 @@ if debug
         view(3);
     end
 end
-cell_props.hnx=hnx;
-cell_props.hny=hny;
-cell_props.hnz=hnz;
-cell_props.xmin=xmin;
-cell_props.xmax=xmax;
-cell_props.ymin=ymin;
-cell_props.ymax=ymax;
-cell_props.zmin=zmin;
-cell_props.zmax=zmax;
-cell_props.cdx = cdx;
-cell_props.cdy = cdy;
-cell_props.cdz = cdz;
-cell_props.dim = dim; 
 end

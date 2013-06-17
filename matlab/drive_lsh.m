@@ -47,11 +47,6 @@ end
 
 addpath('int_morton')
 
-
-
-%% OLD:
-%[sten snodes] = knn_lsh_with_ijk_hash(nodes, 5, 10);
-
 %% NEW:
 if debug
     figure

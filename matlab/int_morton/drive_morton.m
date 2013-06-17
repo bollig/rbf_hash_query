@@ -2,6 +2,10 @@ clear all;
 
 DIM = 2;
 NX = 8;
+
+cell_props.dim = DIM; 
+cell_props.hnx = NX
+
 plotCurves = 1;
 testAll = 1;
 if DIM == 1
@@ -42,7 +46,7 @@ end
 
 
 %% Z-order
-morton_ind = ijk_to_z(ijk_ind, DIM);
+morton_ind = ijk_to_z(ijk_ind, cell_props);
 %% Alternative: (Each Z is 4 nodes per edge)
 % morton_ind = ijk_to_4node_z(ijk_ind, DIM);
 [temp morton_compressed_ind] = sort(morton_ind);
@@ -59,7 +63,7 @@ end
 if testAll
     
     %% U-order
-    morton_ind = ijk_to_u(ijk_ind, DIM);
+    morton_ind = ijk_to_u(ijk_ind, cell_props);
     [temp morton_compressed_ind] = sort(morton_ind);
     s_nodes = nodes(morton_compressed_ind,:);
     
@@ -72,7 +76,7 @@ if testAll
     end
     
     %% X-order
-    morton_ind = ijk_to_x(ijk_ind, DIM);
+    morton_ind = ijk_to_x(ijk_ind, cell_props);
     [temp morton_compressed_ind] = sort(morton_ind);
     s_nodes = nodes(morton_compressed_ind,:);
     
@@ -85,7 +89,7 @@ if testAll
     end
     
      %% 4-node Z-order
-    morton_ind = ijk_to_4node_z(ijk_ind, DIM);
+    morton_ind = ijk_to_4node_z(ijk_ind, cell_props);
     [temp morton_compressed_ind] = sort(morton_ind);
     s_nodes = nodes(morton_compressed_ind,:);
     

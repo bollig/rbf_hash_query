@@ -192,10 +192,10 @@ for xindx = 0-xlevel : 0+xlevel
             end
             
             % Raster:
-            cell_id = ((xc_o*cell_props.hny) + yc_o)*cell_props.hnz + zc_o + 1;
+            cell_id_ijk = ((xc_o*cell_props.hny) + yc_o)*cell_props.hnz + zc_o;
             
             % Morton/Raster: 
-            cell_id = order_func([xc_o, yc_o, zc_o], cell_props.dim);
+            cell_id = order_func([xc_o, yc_o, zc_o], cell_props);
             
             % TODO: only append neighboring cells that contain
             % nodes?

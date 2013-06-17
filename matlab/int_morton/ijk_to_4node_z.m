@@ -1,9 +1,11 @@
-function [output_ind] = ijk_to_4node_z(ijk_ind, dims)
+function [output_ind] = ijk_to_4node_z(ijk_ind, cell_props)
 %% Equations 57, 58 from Stocco and Schrack 2009
 %% NOTE: assumes ijk_ind start at 0
 I = ijk_ind(:,1); 
 J = ijk_ind(:,2); 
 K = ijk_ind(:,3);
+
+dims = cell_props.dim;
 
 if (dims < 2)
     output_ind = ijk_ind(:,1); 
