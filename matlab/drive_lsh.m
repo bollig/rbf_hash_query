@@ -9,8 +9,8 @@ NX = N*CELL_OVERLAY_NX;
 n = 31;
 plotCurves = 1;
 
-%% 0: Regular Distribution; 1: Random Distribution; 2: Load Grid.
-testNodeType=1
+%% 0: Regular Distribution; 1: Random Distribution; 2: Halton Seq; 3: Load Grid.
+testNodeType=2
 
 
 global debug;
@@ -43,8 +43,16 @@ elseif testNodeType==1
     NX = NX^DIM;
     % Random between [0,10]^2
     nodes = [10 .* rand(NX,DIM) zeros(NX,2)];
-    nodes = nodes(:,1:3)
+    nodes = nodes(:,1:3);    
 elseif testNodeType==2
+    NX = NX^DIM;
+    % Generate the halton sequence
+    p = haltonset(DIM,'Skip',1e3,'Leap',1e2);
+    % NOTE: scale and offset by 1 to ensure we're in [-1,1]
+    nodes = [2 * net(p, NX) - 1 zeros(NX,2)];
+    nodes = nodes(:,1:3);
+    
+elseif testNodeType==3
     nodes = load('/Users/evan/sphere_grids/md063.04096');
     nodes = nodes(:,1:3); 
 end
