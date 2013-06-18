@@ -32,7 +32,7 @@ if (dim < 3)
     ti = sprintf('Stencil %d', j);
     title(ti);
     axis square;
-    axis([props.xmin props.xmax props.ymin props.ymax]);
+    axis([props.xmin-1 props.xmax+1 props.ymin-1 props.ymax+1]);
     pbaspect(aspect_ratio)
 else
     [c_x,c_y,c_z] = sphere(20);
@@ -50,6 +50,7 @@ else
     axis square;
     axis([props.xmin props.xmax props.ymin props.ymax props.zmin props.zmax]);
     pbaspect(aspect_ratio)
+    view(3)
 end
 
 hold off;

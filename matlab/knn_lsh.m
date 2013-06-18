@@ -86,23 +86,18 @@ else
             q = q + 1;
         end
         stencils(p,:) = getNearestNeighbors(p, neighbor_candidate_list, sorted_nodes, min(neighbor_candidate_count, max_st_size));
-        if debug
-            hold off;
-            delete(gca);
-            plot_stencil(p, stencils, sorted_nodes, cell_props);
-            hold on;
-            plot3(sorted_nodes(:,1), sorted_nodes(:,2), sorted_nodes(:,3), '-o');
-            hold off;
-            pause(1);
+        if debug && p < 50
+                delete(gca);
+                plot_stencil(p, stencils, sorted_nodes, cell_props);
+                hold on;
+                plot3(sorted_nodes(:,1), sorted_nodes(:,2), sorted_nodes(:,3), '-o');
+                hold off;
+                pause(0.25);
+        end
+        if mod(p, 20) == 0
+           fprintf('.'); 
         end
     end
-end
-
-if debug
-%    hold on;
-    plot_stencil(10, stencils, sorted_nodes, cell_props);
-%    hold off;
-    pause
 end
 end
 
@@ -120,10 +115,16 @@ function [ijk_cell_inds] = getCellNeighbors(hash_ind, hash_ijk, radius, cell_pro
         return;
     end
 
+    % These are multi-dim hashes: 
     outer_cells = getAllCells(radius, hash_ijk, cell_props, order_func);
     inner_cells = getAllCells(radius-1, hash_ijk, cell_props, order_func);
 
-    ijk_cell_inds = setdiff(outer_cells, inner_cells);
+    ijk_cell_hashes = setdiff(outer_cells, inner_cells, 'rows');
+    % PERFORMANCE TIP: Only construct the transformed indices once per cell
+    % This used to be inside getAllCells, but the cost of dilating integers
+    % is high. We can avoid it by working with multi-dim hashes and only
+    % converting to Z/U/X order once when the cells are pushed to the stack. 
+    ijk_cell_inds = order_func(ijk_cell_hashes, cell_props);
 end
 
 
@@ -195,7 +196,7 @@ for xindx = 0-xlevel : 0+xlevel
             cell_id_ijk = ((xc_o*cell_props.hny) + yc_o)*cell_props.hnz + zc_o;
             
             % Morton/Raster: 
-            cell_id = order_func([xc_o, yc_o, zc_o], cell_props);
+            cell_id = [xc_o, yc_o, zc_o]; %order_func([xc_o, yc_o, zc_o], cell_props);
             
             % TODO: only append neighboring cells that contain
             % nodes?

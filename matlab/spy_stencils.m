@@ -14,6 +14,9 @@ end
 [ii,jj] = find(A); 
 bandwidth = max(abs(ii-jj))
 
-spy(A, 5)
+hold off;
+delete(gca);
+spy(A, '.');
+axis('square');
 
 end
