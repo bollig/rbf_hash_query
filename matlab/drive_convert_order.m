@@ -49,10 +49,10 @@ end
 [ii,jj] = find(A(s_ind,s_ind)); 
 bandwidth = max(abs(ii-jj))
 
+%%NOTE: if C is all zeros then we have successfully reordered the matrix to
+%%match the original Z order. 
 C = A(s_ind,s_ind) - B;
-spy(C,'.')
 max(max(C))
-pause
 end
 
 %% Find the bandwidth of the matrix
