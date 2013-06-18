@@ -99,3 +99,24 @@ ijk_order.sten = sten;
 ijk_order.snodes = snodes; 
 ijk_order.ch = ch; 
 ijk_order.cp = cp; 
+
+figure
+subplot(2,3,2);
+spy_stencils(node4_z_order.sten);
+title('4-nodes per Edge (Z) Order');
+
+subplot(2,3,3);
+spy_stencils(ijk_order.sten);
+title('Raster (IJK) Order');
+
+subplot(2,3,4);
+spy_stencils(x_order.sten);
+title('Cross (X) Order');
+
+subplot(2,3,5);
+spy_stencils(z_order.sten);
+title('Morton (Z) Order');
+
+subplot(2,3,6);
+spy_stencils(u_order.sten);
+title('Gray-Code (U) Order');
