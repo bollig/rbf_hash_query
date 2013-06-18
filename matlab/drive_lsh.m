@@ -8,11 +8,11 @@ n = 31;
 plotCurves = 1;
 
 %% 0: Regular Distribution; 1: Random Distribution; 2: Load Grid.
-testNodeType=0
+testNodeType=2
 
 
 global debug;
-debug =0; 
+debug = 0; 
 
 
 if testNodeType==0
@@ -42,7 +42,8 @@ elseif testNodeType==1
     % Random between [0,10]^2
     nodes = [10 .* rand(N,DIM) zeros(N,1)];
 elseif testNodeType==2
-    nodes = load('loadedgrid_1024nodes_final.ascii');
+    nodes = load('/Users/evan/sphere_grids/md063.04096');
+    nodes = nodes(:,1:3); 
 end
 
 

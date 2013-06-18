@@ -1,4 +1,4 @@
-function [bandwidth] = spy_stencils(stencil_list)
+function [symrcm_bandwidth, r] = symrcm_stencils(stencil_list)
 % Show the spy(stencil_list) to see sparsity patterns
 s = figure; 
 N = size(stencil_list, 1); 
@@ -10,13 +10,14 @@ for i = 1:N
     end
 end
 
-%% Find the bandwidth of the matrix
-[ii,jj] = find(A); 
-bandwidth = max(abs(ii-jj))
+r = symrcm(A);
+
+[ii,jj] = find(A(r,r));
+symrcm_bandwidth = max(abs(ii-jj))
 
 hold off;
 delete(gca);
-spy(A, '.');
+spy(A(r,r), '.');
 axis('square');
 
 end
