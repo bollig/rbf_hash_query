@@ -1,22 +1,23 @@
 %clear all;
 
-DIM = 3;
+DIM = 2;
 % Number of nodes in one dimension (ie., [N]^dim)
-N = 1;
+N = 3;
 CELL_OVERLAY_NX = 10;
+NX = N*CELL_OVERLAY_NX;
+
 n = 31;
 plotCurves = 1;
 
 %% 0: Regular Distribution; 1: Random Distribution; 2: Load Grid.
-testNodeType=2
+testNodeType=1
 
 
 global debug;
-debug = 0; 
+debug = 1; 
 
 
 if testNodeType==0
-    NX = N*CELL_OVERLAY_NX;
     %NX = N;
     if DIM == 1
         [nodeX, nodeY, nodeZ] = meshgrid(0:NX-1,0,0);
@@ -39,8 +40,10 @@ if testNodeType==0
     clear ijkX ijkY ijkZ;
     
 elseif testNodeType==1
+    NX = NX^DIM;
     % Random between [0,10]^2
-    nodes = [10 .* rand(N,DIM) zeros(N,1)];
+    nodes = [10 .* rand(NX,DIM) zeros(NX,2)];
+    nodes = nodes(:,1:3)
 elseif testNodeType==2
     nodes = load('/Users/evan/sphere_grids/md063.04096');
     nodes = nodes(:,1:3); 
@@ -101,6 +104,7 @@ ijk_order.ch = ch;
 ijk_order.cp = cp; 
 
 figure
+hold on
 subplot(2,3,2);
 spy_stencils(node4_z_order.sten);
 title('4-nodes per Edge (Z) Order');
@@ -120,3 +124,5 @@ title('Morton (Z) Order');
 subplot(2,3,6);
 spy_stencils(u_order.sten);
 title('Gray-Code (U) Order');
+
+hold off
