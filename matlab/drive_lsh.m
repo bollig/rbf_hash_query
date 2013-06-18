@@ -10,7 +10,7 @@ n = 31;
 plotCurves = 1;
 
 %% 0: Regular Distribution; 1: Random Distribution; 2: Halton Seq; 3: Load Grid.
-testNodeType=0
+testNodeType=2
 
 
 global debug;
