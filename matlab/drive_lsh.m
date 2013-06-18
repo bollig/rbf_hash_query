@@ -3,18 +3,18 @@
 DIM = 2;
 % Number of nodes in one dimension (ie., [N]^dim)
 N = 3;
-CELL_OVERLAY_NX = 10;
+CELL_OVERLAY_NX = 6;
 NX = N*CELL_OVERLAY_NX;
 
 n = 31;
 plotCurves = 1;
 
 %% 0: Regular Distribution; 1: Random Distribution; 2: Halton Seq; 3: Load Grid.
-testNodeType=2
+testNodeType=0
 
 
 global debug;
-debug = 1; 
+debug = 0; 
 
 
 if testNodeType==0
