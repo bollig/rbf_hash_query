@@ -3,7 +3,7 @@ close all;
 
 DIM = 2;
 % Number of nodes in one dimension (ie., [N]^dim)
-N = 3;
+N = 5;
 n = 31;
 
 CELL_OVERLAY_NX = floor(n/2);
@@ -16,7 +16,7 @@ testNodeType=0;
 
 
 global debug;
-debug = 0; 
+debug = 1; 
 
 
 if testNodeType==0

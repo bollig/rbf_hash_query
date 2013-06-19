@@ -109,10 +109,10 @@ else
         q = 0;
         neighbor_candidate_list = [];
         neighbor_candidate_count = 0;
-
+        
         while ((q <= 1) || (neighbor_candidate_count <= max_st_size)) && (q < cell_props.hnx)
             % Get this list of cells neighboring the cell_ind
-            neighbor_cell_inds_rad_q = getCellNeighbors(cell_ind, center_cell_ijk, q, cell_props, order_func);
+            neighbor_cell_inds_rad_q = getCellNeighbors(cell_ind, center_cell_ijk, q, neighbor_candidate_list, cell_props, order_func);
             neighbors_rad_q = 0; 
             % For each cell, append node list
             % if node list gets large enough we can break loop (only after
@@ -153,16 +153,16 @@ node_ind = find(hash_list == hash_ind);
 end
 
 
-function [ijk_cell_inds] = getCellNeighbors(hash_ind, hash_ijk, radius, cell_props, order_func)
+function [ordered_cell_inds, ijk_cell_inds] = getCellNeighbors(hash_ind, hash_ijk, radius, inner_cells, cell_props, order_func)
     if radius < 1
         ijk_cell_inds = hash_ind;
+        ordered_cell_inds = hash_ind;
         return;
     end
 
     % These are multi-dim hashes: 
     outer_cells = getAllCells(radius, hash_ijk, cell_props, order_func);
-    inner_cells = getAllCells(radius-1, hash_ijk, cell_props, order_func);
-
+  
     ijk_cell_hashes = setdiff(outer_cells, inner_cells, 'rows');
     % PERFORMANCE TIP: Only construct the transformed indices once per cell
     % This used to be inside getAllCells, but the cost of dilating integers
