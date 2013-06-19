@@ -1,16 +1,18 @@
 %clear all;
+close all;
 
 DIM = 2;
 % Number of nodes in one dimension (ie., [N]^dim)
 N = 3;
-CELL_OVERLAY_NX = 6;
-NX = N*CELL_OVERLAY_NX;
-
 n = 31;
+
+CELL_OVERLAY_NX = floor(n/2);
+NX = CELL_OVERLAY_NX * N;
+
 plotCurves = 1;
 
 %% 0: Regular Distribution; 1: Random Distribution; 2: Halton Seq; 3: Load Grid.
-testNodeType=2
+testNodeType=0;
 
 
 global debug;
@@ -60,9 +62,33 @@ end
 
 addpath('int_morton')
 
+fprintf('KDTree-ordering\n');
+USE_KDTREE = 1;
+[sten snodes ch cp] = knn_lsh(nodes, n, CELL_OVERLAY_NX, 3, @ijk_to_z, USE_KDTREE);
+figure
+kdtree_order.bandwidth = spy_stencils(sten);
+kdtree_order.rcm_bandwidth = symrcm_stencils(sten);
+kdtree_order.sten = sten;
+kdtree_order.snodes = snodes; 
+kdtree_order.ch = ch; 
+kdtree_order.cp = cp; 
+
+fprintf('KDTree-ordering\n');
+USE_KDTREE = 1;
+[sten snodes ch cp] = knn_lsh(nodes, n, CELL_OVERLAY_NX, 3, @ijk_to_z, USE_KDTREE);
+figure
+kdtree_unsorted_order.bandwidth = spy_stencils(sten);
+kdtree_unsorted_order.rcm_bandwidth = symrcm_stencils(sten);
+kdtree_unsorted_order.sten = sten;
+kdtree_unsorted_order.snodes = snodes; 
+kdtree_unsorted_order.ch = ch; 
+kdtree_unsorted_order.cp = cp; 
+
+
+
 fprintf('Z-ordering\n');
 [sten snodes ch cp] = knn_lsh(nodes, n, CELL_OVERLAY_NX, 3, @ijk_to_z);
-figure(2)
+figure
 z_order.bandwidth = spy_stencils(sten);
 z_order.rcm_bandwidth = symrcm_stencils(sten);
 z_order.sten = sten;
@@ -72,7 +98,7 @@ z_order.cp = cp;
 
 fprintf('U-ordering\n');
 [sten snodes ch cp] = knn_lsh(nodes, n, CELL_OVERLAY_NX, 3, @ijk_to_u);
-figure(3)
+figure
 u_order.bandwidth = spy_stencils(sten);
 u_order.rcm_bandwidth = symrcm_stencils(sten);
 u_order.sten = sten;
@@ -82,7 +108,7 @@ u_order.cp = cp;
 
 fprintf('X-ordering\n');
 [sten snodes ch cp] = knn_lsh(nodes, n, CELL_OVERLAY_NX, 3, @ijk_to_x);
-figure(4)
+figure
 x_order.bandwidth = spy_stencils(sten);
 x_order.rcm_bandwidth = symrcm_stencils(sten);
 x_order.sten = sten;
@@ -92,7 +118,7 @@ x_order.cp = cp;
 
 fprintf('4 node Z-ordering\n');
 [sten snodes ch cp] = knn_lsh(nodes, n, CELL_OVERLAY_NX, 3, @ijk_to_4node_z);
-figure(5)
+figure
 node4_z_order.bandwidth = spy_stencils(sten);
 node4_z_order.rcm_bandwidth = symrcm_stencils(sten);
 node4_z_order.sten = sten;
@@ -103,7 +129,7 @@ node4_z_order.cp = cp;
 
 fprintf('IJK-ordering\n');
 [sten snodes ch cp] = knn_lsh(nodes, n, CELL_OVERLAY_NX, 3, @ijk_to_ijk);
-figure(6)
+figure
 ijk_order.bandwidth = spy_stencils(sten);
 ijk_order.rcm_bandwidth = symrcm_stencils(sten);
 ijk_order.sten = sten;
@@ -113,6 +139,12 @@ ijk_order.cp = cp;
 
 figure
 hold on
+
+subplot(2,3,1);
+spy_stencils(kdtree_order.sten);
+title('KDTree (No reordering)');
+
+
 subplot(2,3,2);
 spy_stencils(node4_z_order.sten);
 title('4-nodes per Edge (Z) Order');

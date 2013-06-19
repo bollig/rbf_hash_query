@@ -1,7 +1,9 @@
-function [stencils, sorted_nodes, sorted_hashes, cell_props] = knn_lsh(node_list, max_st_size, hnx, dim, order_func)
+function [stencils, sorted_nodes, sorted_hashes, cell_props] = knn_lsh(node_list, max_st_size, hnx, dim, order_func, useKDTree)
 
-%% Use the KDtree to find nearest neighbors (inefficient)?
-useKDTree = 0;
+if nargin < 6
+    %% Use the KDtree to find nearest neighbors (inefficient)?
+    useKDTree = 0;
+end
 
 global debug;
 
@@ -11,6 +13,8 @@ if debug
     hold off;
     pause
 end
+
+tic
 
 % cell_hashes are a collection of bins for each cell indicating which node
 % indices lie within each cell.
@@ -37,12 +41,47 @@ end
 
 if useKDTree
     addpath('kdtree')
-    ktree = kdtree_build(sorted_nodes);
-    
-    for i = 1:size(sorted_nodes,1)
-        sten = kdtree_k_nearest_neighbors(ktree, sorted_nodes(i,:), max_st_size);
-        % reverse order
-        stencils(i,:) = sten(end:-1:1);
+    %    ktree = kdtree_build(sorted_nodes);
+    if useKDTree > 1
+        fprintf('Building KDTree based on unsorted nodes\n'); 
+        %% USE THE BUILTIN KDTREE FROM THE STATS TOOLBOX.
+        kdtree = KDTreeSearcher(nodes,'distance','euclidean');
+        
+        fprintf('Tree built\n');
+        stencils = knnsearch(kdtree,nodes,'k',max_st_size);
+        size(stencils)
+        fprintf('Stencils queried\n');
+        for p = 1:size(nodes,1)
+            if debug && p < 50
+                delete(gca);
+                plot_stencil(p, stencils, nodes, cell_props);
+                hold on;
+                plot3(nodes(:,1), nodes(:,2), nodes(:,3), '-o');
+                hold off;
+                pause(0.25);
+                %pause
+            end
+        end
+    else 
+        fprintf('Building KDTree based on space-filling curve sorted nodes\n'); 
+        %% USE THE BUILTIN KDTREE FROM THE STATS TOOLBOX.
+        kdtree = KDTreeSearcher(sorted_nodes,'distance','euclidean');
+        
+        fprintf('Tree built\n');
+        stencils = knnsearch(kdtree,sorted_nodes,'k',max_st_size);
+        size(stencils)
+        fprintf('Stencils queried\n');
+        for p = 1:size(sorted_nodes,1)
+            if debug && p < 50
+                delete(gca);
+                plot_stencil(p, stencils, sorted_nodes, cell_props);
+                hold on;
+                plot3(sorted_nodes(:,1), sorted_nodes(:,2), sorted_nodes(:,3), '-o');
+                hold off;
+                pause(0.25);
+                %pause
+            end
+        end
     end
 else
     
@@ -68,9 +107,10 @@ else
         %       q = 0 (center)
         %       q = 1 (center +/- -1:1^2 
         q = 0;
-        neighbor_candidate_count = 0;
         neighbor_candidate_list = [];
-        while (neighbor_candidate_count <= max_st_size) && (q < cell_props.hnx)
+        neighbor_candidate_count = 0;
+
+        while ((q <= 1) || (neighbor_candidate_count <= max_st_size)) && (q < cell_props.hnx)
             % Get this list of cells neighboring the cell_ind
             neighbor_cell_inds_rad_q = getCellNeighbors(cell_ind, center_cell_ijk, q, cell_props, order_func);
             neighbors_rad_q = 0; 
@@ -92,13 +132,17 @@ else
                 hold on;
                 plot3(sorted_nodes(:,1), sorted_nodes(:,2), sorted_nodes(:,3), '-o');
                 hold off;
-                pause(0.25);
+                %pause(0.25);
+                pause
         end
         if mod(p, 20) == 0
            fprintf('.'); 
         end
     end
 end
+
+toc
+
 end
 
 function [node_ind] = getCellNodes(hash_ind, hash_list)
