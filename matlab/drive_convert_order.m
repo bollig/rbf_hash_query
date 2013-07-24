@@ -1,15 +1,24 @@
-function [] = drive_convert_order(z_order)
+function [] = drive_convert_order(direct_order)
 
-addpath('int_morton'); 
+global debug; 
+debug = 0; 
+
+addpath('./int_morton'); 
 
 node_list = dlmread('ijk_nodes');
 orig_stens = dlmread('ijk_stencils');
 
+direct_order_stens = dlmread('z_stencils');
+
+n = size(orig_stens,2);
 spy_stencils(orig_stens);
 
-hnx = 10;
+
+%% NOTE: These must match a drive_lsh.m run in order to reproduce the ordering
+hnx = floor(n/2);
 dim = 3;
 order_func = @ijk_to_z;
+
 
 % cell_hashes are a collection of bins for each cell indicating which node
 % indices lie within each cell.
@@ -20,11 +29,11 @@ order_func = @ijk_to_z;
 [sorted_hashes s_ind] = sort(cell_hashes);
 sorted_nodes = node_list(s_ind,:);
 
-spy_order(orig_stens, s_ind, z_order);
+spy_order(orig_stens, s_ind, direct_order);
 
 end
 
-function [bandwidth] = spy_order(stencil_list, s_ind, z_order)
+function [bandwidth] = spy_order(stencil_list, s_ind, direct_order_stens)
 
 % Show the spy(stencil_list) to see sparsity patterns
 s = figure; 
@@ -43,7 +52,7 @@ if 1
 B = spalloc(N, N, st * N);
 for i = 1:N
     for j = 1:st
-        B(i,z_order.sten(i,j)) = 1; 
+        B(i,direct_order.sten(i,j)) = 1; 
     end
 end
 
@@ -55,6 +64,7 @@ bandwidth = max(abs(ii-jj))
 %%match the original Z order. 
 C = A(s_ind,s_ind) - B;
 max(max(C))
+spy(C)
 end
 
 %% Find the bandwidth of the matrix

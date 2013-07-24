@@ -1,9 +1,10 @@
 %clear all;
 close all;
+addpath('./int_morton');
 
 DIM = 2;
 % Number of nodes in one dimension (ie., [N]^dim)
-N = 1;
+N = 3;
 n = 31;
 
 CELL_OVERLAY_NX = floor(n/2);
@@ -99,6 +100,7 @@ z_order.sten = sten;
 z_order.snodes = snodes; 
 z_order.ch = ch; 
 z_order.cp = cp; 
+dlmwrite('z_stencils', sten);
 
 fprintf('U-ordering\n');
 figure
@@ -109,6 +111,7 @@ u_order.sten = sten;
 u_order.snodes = snodes; 
 u_order.ch = ch; 
 u_order.cp = cp; 
+dlmwrite('u_stencils', sten);
 
 fprintf('X-ordering\n');
 figure
@@ -119,6 +122,7 @@ x_order.sten = sten;
 x_order.snodes = snodes; 
 x_order.ch = ch; 
 x_order.cp = cp; 
+dlmwrite('x_stencils', sten);
 
 fprintf('4 node Z-ordering\n');
 figure
@@ -129,6 +133,7 @@ node4_z_order.sten = sten;
 node4_z_order.snodes = snodes; 
 node4_z_order.ch = ch; 
 node4_z_order.cp = cp; 
+dlmwrite('node4_z_stencils', sten);
 
 
 fprintf('IJK-ordering\n');
@@ -140,6 +145,9 @@ ijk_order.sten = sten;
 ijk_order.snodes = snodes; 
 ijk_order.ch = ch; 
 ijk_order.cp = cp; 
+
+dlmwrite('ijk_stencils', sten);
+dlmwrite('ijk_nodes', snodes);
 
 figure
 hold on
