@@ -11,7 +11,7 @@ if debug
     hold on
     plot3(node_list(:,1), node_list(:,2), node_list(:,3), 'r.--');
     hold off;
-    pause
+    pause(2);
 end
 
 tic
@@ -36,7 +36,7 @@ if debug
     hold on;
     plot3(sorted_nodes(:,1), sorted_nodes(:,2), sorted_nodes(:,3), '-o');
     hold off;
-    pause
+    pause(2);
 end
 
 if useKDTree
@@ -59,7 +59,6 @@ if useKDTree
                 plot3(nodes(:,1), nodes(:,2), nodes(:,3), '-o');
                 hold off;
                 pause(0.25);
-                %pause
             end
         end
     else 
@@ -79,7 +78,6 @@ if useKDTree
                 plot3(sorted_nodes(:,1), sorted_nodes(:,2), sorted_nodes(:,3), '-o');
                 hold off;
                 pause(0.25);
-                %pause
             end
         end
     end
@@ -134,8 +132,8 @@ else
                 hold on;
                 plot3(sorted_nodes(:,1), sorted_nodes(:,2), sorted_nodes(:,3), '-o');
                 hold off;
-                %pause(0.25);
-                pause
+                pause(0.25);
+                %pause
         end
         if mod(p, 20) == 0
            fprintf('.'); 
