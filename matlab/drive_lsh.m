@@ -3,7 +3,7 @@ close all;
 
 DIM = 2;
 % Number of nodes in one dimension (ie., [N]^dim)
-N = 5;
+N = 2;
 n = 31;
 
 CELL_OVERLAY_NX = floor(n/2);
@@ -16,7 +16,7 @@ testNodeType=0;
 
 
 global debug;
-debug = 1; 
+debug = 0; 
 
 
 if testNodeType==0
@@ -85,7 +85,8 @@ kdtree_unsorted_order.ch = ch;
 kdtree_unsorted_order.cp = cp; 
 
 
-
+USE_KDRTREE=0;
+debug=1
 fprintf('Z-ordering\n');
 [sten snodes ch cp] = knn_lsh(nodes, n, CELL_OVERLAY_NX, 3, @ijk_to_z);
 figure

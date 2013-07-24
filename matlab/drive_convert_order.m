@@ -1,5 +1,7 @@
 function [] = drive_convert_order(z_order)
 
+addpath('int_morton'); 
+
 node_list = dlmread('ijk_nodes');
 orig_stens = dlmread('ijk_stencils');
 
