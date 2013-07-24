@@ -29,7 +29,7 @@ order_func = @ijk_to_z;
 [sorted_hashes s_ind] = sort(cell_hashes);
 sorted_nodes = node_list(s_ind,:);
 
-spy_order(orig_stens, s_ind, direct_order);
+spy_order(orig_stens, s_ind, direct_order_stens);
 
 end
 
@@ -52,7 +52,7 @@ if 1
 B = spalloc(N, N, st * N);
 for i = 1:N
     for j = 1:st
-        B(i,direct_order.sten(i,j)) = 1; 
+        B(i,direct_order_stens(i,j)) = 1; 
     end
 end
 
