@@ -41,9 +41,7 @@ function [] = drive_new_order(input_grid, n, dim, hnx, new_order_func)
     if strcmp(func2str(new_order_func), 'rcm')
         A = spalloc(N, N, n * N);
         for i = 1:N
-            for j = 1:n
-                A(i,orig_stens(i,j+1)+1) = 1;
-            end
+                A(i,orig_stens(i,2:end)+1) = 1;            
         end
         s_ind = symrcm(A);
         ordered_A = A(s_ind,s_ind);
@@ -62,6 +60,19 @@ function [] = drive_new_order(input_grid, n, dim, hnx, new_order_func)
 	[sorted_hashes s_ind] = sort(cell_hashes);
     end
     
+    B = spalloc(N,N,n*N);
+    for i = 1:N
+        B(i,orig_stens(i,2:end)+1) = 1;
+    end
+    
+    [i,j] = find(B);
+    bw_before = max(i-j) + 1
+    %spy(B)
+    %pause
+    [i,j] = find(B(s_ind,s_ind));
+    bw_after = max(i-j) + 1
+    %spy(B(s_ind, s_ind)); 
+    
     sorted_nodes = node_list(s_ind,:);
     
     unsorted = 1:N;
@@ -79,6 +90,9 @@ function [] = drive_new_order(input_grid, n, dim, hnx, new_order_func)
     
     output_ind = sprintf('%s/%s_ind.ascii', output_dir, func2str(new_order_func))
     dlmwrite(output_ind, s_ind, ' ');
+    output_bw = sprintf('%s/%s_bw.txt', output_dir, func2str(new_order_func))
+    dlmwrite(output_bw, [bw_before, bw_after], ' ');
+    
     output_grid = sprintf('%s/%s', output_dir, input_grid)
 	dlmwrite(output_grid, sorted_nodes, ' '); 
     output_stencils = sprintf('%s/%s', output_dir, input_stencils)
