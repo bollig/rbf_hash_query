@@ -38,7 +38,7 @@ function [] = drive_new_order(input_grid, n, dim, hnx, new_order_func)
     % Get sorted values back to 0 origin
     N = size(orig_stens, 1); 
     
-    if func2str(new_order_func) == 'rcm'
+    if strcmp(func2str(new_order_func), 'rcm')
         A = spalloc(N, N, n * N);
         for i = 1:N
             for j = 1:n
