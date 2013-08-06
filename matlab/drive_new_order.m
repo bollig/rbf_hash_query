@@ -24,14 +24,34 @@ function [] = drive_new_order(input_grid, n, dim, hnx, new_order_func)
 	mkdir(output_dir)
 
 	input_stencils = sprintf('stencils_maxsz%d_%s', n, input_grid);
+    input_avg_radii = sprintf('avg_radii_%s', input_grid);
+    input_min_radii = sprintf('min_radii_%s', input_grid);
+    input_max_radii = sprintf('max_radii_%s', input_grid);
+    
 	node_list = dlmread(input_grid);
 	orig_stens = dlmread(input_stencils);
+    
+	orig_avg_radii = dlmread(input_avg_radii);
+    orig_min_radii = dlmread(input_min_radii);
+	orig_max_radii = dlmread(input_max_radii);
     
     % Get sorted values back to 0 origin
     N = size(orig_stens, 1); 
     
-	% spy_stencils(orig_stens);
-
+    if func2str(new_order_func) == 'rcm'
+        A = spalloc(N, N, n * N);
+        for i = 1:N
+            for j = 1:n
+                A(i,orig_stens(i,j+1)+1) = 1;
+            end
+        end
+        s_ind = symrcm(A);
+        ordered_A = A(s_ind,s_ind);
+%         spy(A);
+%         pause;
+%         spy(ordered_A);
+    else 
+    
 	% cell_hashes are a collection of bins for each cell indicating which node
 	% indices lie within each cell.
 	[cell_hashes, cell_ijk, cell_props] = lsh_overlay_grid(node_list, hnx, new_order_func, dim);
@@ -40,7 +60,9 @@ function [] = drive_new_order(input_grid, n, dim, hnx, new_order_func)
 	%% Sort our nodes according to the cell hashes. Does not sort within the
 	%% cells!
 	[sorted_hashes s_ind] = sort(cell_hashes);
-	sorted_nodes = node_list(s_ind,:);
+    end
+    
+    sorted_nodes = node_list(s_ind,:);
     
     unsorted = 1:N;
     newInd(s_ind) = unsorted;
@@ -55,12 +77,19 @@ function [] = drive_new_order(input_grid, n, dim, hnx, new_order_func)
         sorted_stens(newInd(i), 2:n+1) = newInd(old_j) - 1;
     end
     
-    output_ind = sprintf('%s/%s_ind.ascii', output_dir, func2str(new_order_func));
+    output_ind = sprintf('%s/%s_ind.ascii', output_dir, func2str(new_order_func))
     dlmwrite(output_ind, s_ind, ' ');
-    output_grid = sprintf('%s/%s', output_dir, input_grid);
+    output_grid = sprintf('%s/%s', output_dir, input_grid)
 	dlmwrite(output_grid, sorted_nodes, ' '); 
-    output_stencils = sprintf('%s/%s', output_dir, input_stencils);
+    output_stencils = sprintf('%s/%s', output_dir, input_stencils)
 	dlmwrite(output_stencils, sorted_stens, ' ');
+    output_avg_radii = sprintf('%s/%s', output_dir, input_avg_radii)
+	dlmwrite(output_avg_radii, orig_avg_radii(s_ind), ' ');
+    output_min_radii = sprintf('%s/%s', output_dir, input_min_radii)
+	dlmwrite(output_min_radii, orig_min_radii(s_ind), ' ');
+    output_max_radii = sprintf('%s/%s', output_dir, input_max_radii)
+	dlmwrite(output_max_radii, orig_max_radii(s_ind), ' ');
+    
 
     if 0
         c = dlmread(output_stencils)
