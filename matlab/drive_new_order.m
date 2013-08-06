@@ -23,9 +23,13 @@ function [] = drive_new_order(input_grid, n, dim, hnx, new_order_func)
 	output_dir = sprintf('reordered_%s', func2str(new_order_func))
 	mkdir(output_dir)
 
+	input_stencils = sprintf('stencils_maxsz%d_%s', n, input_grid);
 	node_list = dlmread(input_grid);
-	%	orig_stens = dlmread(sprintf('stencils_maxsz%d_%s', n, input_grid);
-
+	orig_stens = dlmread(input_stencils);
+    
+    % Get sorted values back to 0 origin
+    N = size(orig_stens, 1); 
+    
 	% spy_stencils(orig_stens);
 
 	% cell_hashes are a collection of bins for each cell indicating which node
@@ -37,20 +41,52 @@ function [] = drive_new_order(input_grid, n, dim, hnx, new_order_func)
 	%% cells!
 	[sorted_hashes s_ind] = sort(cell_hashes);
 	sorted_nodes = node_list(s_ind,:);
+    
+    unsorted = 1:N;
+    newInd(s_ind) = unsorted;
+    
+    % Get sorted values back to 0 origin
+    N = size(orig_stens, 1);
+    sorted_stens = orig_stens;
+    for i = 1:N
+        %    add 1 because input stencils start at 0.
+        old_j = orig_stens(i, 2:end) + 1;
+        %    subtract 1 at end for same reason
+        sorted_stens(newInd(i), 2:n+1) = newInd(old_j) - 1;
+    end
+    
+    output_ind = sprintf('%s/%s_ind.ascii', output_dir, func2str(new_order_func));
+    dlmwrite(output_ind, s_ind, ' ');
+    output_grid = sprintf('%s/%s', output_dir, input_grid);
+	dlmwrite(output_grid, sorted_nodes, ' '); 
+    output_stencils = sprintf('%s/%s', output_dir, input_stencils);
+	dlmwrite(output_stencils, sorted_stens, ' ');
 
-	dlmwrite(sprintf('%s/%s', output_dir, input_grid), sorted_nodes); 
-	%dlmwrite(sprintf('%s/%s', output_dir, input_stencils), orig_stens(s_ind,s_ind)); 
-
+    if 0
+        c = dlmread(output_stencils)
+        b = dlmread(output_grid)
+        for i = 1:N
+            g=c(i,2:end)+1;
+            plot3(b(:,1), b(:,2), b(:,3), 'r--'); 
+            hold on; 
+            plot3(b(g',1), b(g',2), b(g',3), 'g.'); 
+            plot3(b(g(1),1), b(g(1),2), b(g(1),3), 'bo'); 
+            hold off;
+            pause
+        end
+    end
+    
 end
 
-function[] = reorder_stens()
 
-	N = size(stencil_list, 1); 
-	st = size(stencil_list,2); 
-	A = spalloc(N, N, st * N);
-	for i = 1:N
-	    for j = 1:st
-		A(i,stencil_list(i,j)) = 1; 
-	    end
-	end
+function[] = bak()
+% Get sorted values back to 0 origin
+    N = size(orig_stens, 1);
+    sorted_stens = orig_stens;
+    for i = 1:N
+        %    add 1 because input stencils start at 0.
+        old_j = old_stencils(i, 2:end) + 1;
+        %    subtract 1 at end for same reason
+        sorted_stens(s_ind(i), 2:n+1) = s_ind(old_j) - 1;
+    end
 end
