@@ -89,20 +89,20 @@ function [] = drive_new_order(input_grid, n, dim, hnx, new_order_func)
     end
     
     output_ind = sprintf('%s/%s_ind.ascii', output_dir, func2str(new_order_func))
-    dlmwrite(output_ind, s_ind, ' ');
+    writeToFile(output_ind, s_ind, ' ');
     output_bw = sprintf('%s/%s_bw.txt', output_dir, func2str(new_order_func))
-    dlmwrite(output_bw, [bw_before, bw_after], ' ');
+    writeToFile(output_bw, [bw_before, bw_after], ' ');
     
     output_grid = sprintf('%s/%s', output_dir, input_grid)
-	dlmwrite(output_grid, sorted_nodes, ' '); 
+	writeToFile(output_grid, sorted_nodes, ' ', 1); 
     output_stencils = sprintf('%s/%s', output_dir, input_stencils)
-	dlmwrite(output_stencils, sorted_stens, ' ');
+	writeToFile(output_stencils, sorted_stens, ' ');
     output_avg_radii = sprintf('%s/%s', output_dir, input_avg_radii)
-	dlmwrite(output_avg_radii, orig_avg_radii(s_ind), ' ');
+	writeToFile(output_avg_radii, orig_avg_radii(s_ind), ' ', 1);
     output_min_radii = sprintf('%s/%s', output_dir, input_min_radii)
-	dlmwrite(output_min_radii, orig_min_radii(s_ind), ' ');
+	writeToFile(output_min_radii, orig_min_radii(s_ind), ' ', 1);
     output_max_radii = sprintf('%s/%s', output_dir, input_max_radii)
-	dlmwrite(output_max_radii, orig_max_radii(s_ind), ' ');
+	writeToFile(output_max_radii, orig_max_radii(s_ind), ' ', 1);
     
 
     if 0
@@ -121,15 +121,29 @@ function [] = drive_new_order(input_grid, n, dim, hnx, new_order_func)
     
 end
 
+function [] = writeToFile(fname, data, delimiter, isDouble)
 
-function[] = bak()
-% Get sorted values back to 0 origin
-    N = size(orig_stens, 1);
-    sorted_stens = orig_stens;
-    for i = 1:N
-        %    add 1 because input stencils start at 0.
-        old_j = old_stencils(i, 2:end) + 1;
-        %    subtract 1 at end for same reason
-        sorted_stens(s_ind(i), 2:n+1) = s_ind(old_j) - 1;
+if nargin < 4
+    isDouble = 0; 
+end
+[M N] = size(data); 
+
+fid = fopen(fname, 'wt');
+if isDouble
+    for i = 1:M
+        for j = 1:N
+            fprintf(fid, '%g%s', data(i,j),delimiter);
+        end
+        fprintf(fid, '\n');
     end
+else
+    for i = 1:M
+        for j = 1:N
+            fprintf(fid, '%d%s', data(i,j),delimiter);
+        end
+        fprintf(fid, '\n');
+    end
+end
+fclose(fid);
+
 end
