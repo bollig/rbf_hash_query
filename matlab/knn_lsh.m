@@ -9,7 +9,7 @@ global debug;
 
 if debug
     hold on
-    plot3(node_list(:,1), node_list(:,2), node_list(:,3), 'r.--');
+    plot3(node_list(:,1), node_list(:,2), node_list(:,3), 'or--', 'MarkerEdgeColor', 'b');
     hold off;
     pause(2);
 end

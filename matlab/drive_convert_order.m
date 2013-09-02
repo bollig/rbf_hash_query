@@ -1,7 +1,7 @@
 function [] = drive_convert_order(direct_order)
 
 global debug; 
-debug = 0; 
+debug = 1; 
 
 addpath('./int_morton'); 
 
@@ -19,7 +19,7 @@ hnx = floor(n/2);
 dim = 3;
 order_func = @ijk_to_z;
 
-
+figure 
 % cell_hashes are a collection of bins for each cell indicating which node
 % indices lie within each cell.
 [cell_hashes, cell_ijk, cell_props] = lsh_overlay_grid(node_list, hnx, order_func, dim);
@@ -28,7 +28,7 @@ order_func = @ijk_to_z;
 %% cells!
 [sorted_hashes s_ind] = sort(cell_hashes);
 sorted_nodes = node_list(s_ind,:);
-
+figure ;
 spy_order(orig_stens, s_ind, direct_order_stens);
 
 end

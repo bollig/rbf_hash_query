@@ -37,13 +37,25 @@ clear ijkX ijkY ijkZ;
 % zlabel('j');
 
 if plotCurves
-    subplot(2,3,3);
+    subplot(2,3,1);
     plot3(nodes(:,1), nodes(:,2), nodes(:,3),'o-');
     title('Original (Raster) Order');
     axis([-1 NX -1 NX -1 NX]);
     view(max(2,DIM))
 end
 
+if plotCurves
+    kdtree = KDTreeSearcher(nodes,'distance','euclidean');
+    sten = knnsearch(kdtree, nodes, 'k',5);
+    kdtree_order.rcm = symrcm_stencils(sten, 0);
+    
+    subplot(2,3,2);
+    s_nodes = nodes(kdtree_order.rcm.r,:);
+    plot3(s_nodes(:,1), s_nodes(:,2), s_nodes(:,3),'o-');
+    title('Reverse Cuthill-McKee (n=3; *)');
+    axis([-1 NX -1 NX -1 NX]);
+    view(max(2,DIM))
+end
 
 %% Z-order
 morton_ind = ijk_to_z(ijk_ind, cell_props);
@@ -94,7 +106,7 @@ if testAll
     s_nodes = nodes(morton_compressed_ind,:);
     
     if plotCurves
-        subplot(2,3,2);
+        subplot(2,3,3);
         plot3(s_nodes(:,1), s_nodes(:,2), s_nodes(:,3),'o-');
         title('4-nodes per Edge (Z) Order');
         axis([-1 NX -1 NX -1 NX]);
@@ -102,3 +114,4 @@ if testAll
     end
     
 end
+

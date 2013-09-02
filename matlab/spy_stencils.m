@@ -1,4 +1,4 @@
-function [bandwidth] = spy_stencils(stencil_list)
+function [bandwidth] = spy_stencils(stencil_list, reorder)
 % Show the spy(stencil_list) to see sparsity patterns
 N = size(stencil_list, 1); 
 st = size(stencil_list,2); 
@@ -7,6 +7,10 @@ for i = 1:N
     for j = 1:st
         A(i,stencil_list(i,j)) = 1; 
     end
+end
+
+if nargin > 1
+   A = A(reorder,reorder); 
 end
 
 %% Find the bandwidth of the matrix
