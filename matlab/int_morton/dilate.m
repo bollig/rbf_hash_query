@@ -4,6 +4,8 @@ function [dilated] = dilate(X_dec, DIM, M)
 %% Codes", IEEE Transactions on Computers, Vol. 58, No. 3, March 2009)
 % WARNING! ONLY OUTPUTS A uint32
 
+global debug 
+
 %% Assume we have 32-bit integers
 steps = log2(32);
 
@@ -18,6 +20,9 @@ for i = steps:-1:1
     N = M*2^(i-1);
     P = DIM*2^(i-1);
     mask = genmask(P,N);
+    if debug
+       fprintf('((X_p << %d) | X_p) & %x\n', P, mask)
+    end
     %dec2hex(mask);
     %X_pp = dilate_n_m(X_pp,N,i);
     X_pp = bitand(bitor(X_p, bitshift(X_p,P)), mask);
