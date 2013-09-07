@@ -40,9 +40,19 @@ function [] = drive_new_order(input_grid, n, dim, hnx, new_order_func)
     
     if strcmp(func2str(new_order_func), 'rcm')
         A = spalloc(N, N, n * N);
+        %B = spalloc(N, N, n * N);
+        I=[];
+        J=[];
+        V=[];
         for i = 1:N
-                A(i,orig_stens(i,2:end)+1) = 1;            
+            nel = size(orig_stens(i,2:end),2);
+            I = [I; i * ones(nel,1)];
+            J = [J; orig_stens(i,2:end)' + 1];
+            V = [V; ones(nel,1)]; 
+            %B(i,orig_stens(i,2:end)+1) = 1;            
         end
+        A = sparse(I,J,V,N,N); 
+        
         s_ind = symrcm(A);
         ordered_A = A(s_ind,s_ind);
 %         spy(A);
